@@ -21,6 +21,12 @@ concurrency:
 permissions:
   contents: read
 
+# Opt every job into Node 24 for JavaScript-based actions. Without this,
+# actions/checkout@v5, upload-artifact@v4, etc. emit a deprecation warning
+# every run; from June 2026 Node 20 won't be available at all.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   # ---------- BUILD ----------
   # Always runs. Validates that the site builds with the same Hugo version,
