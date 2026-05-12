@@ -31,6 +31,8 @@ Mail dues and DD214 separately to:
 
 ## Application
 
+<div id="form-error-region" class="form-error" role="alert" hidden></div>
+
 <form class="form" action="/_form/application.php" method="POST" novalidate>
 
 <div class="form-field">
@@ -94,7 +96,8 @@ Mail dues and DD214 separately to:
 
 <div class="form-field">
   <label for="app-zip">ZIP</label>
-  <input id="app-zip" name="zip" type="text" autocomplete="postal-code" inputmode="numeric">
+  <input id="app-zip" name="zip" type="text" autocomplete="postal-code" inputmode="numeric" aria-describedby="app-zip-help">
+  <p id="app-zip-help" class="form-help">5- or 9-digit US ZIP code.</p>
 </div>
 
 <fieldset class="form-field">
@@ -150,8 +153,10 @@ Mail dues and DD214 separately to:
 </div>
 
 <button type="submit" class="form-submit">Submit Application</button>
-<p class="form-help">
+<p class="form-help" id="app-submit-help">
   After submitting, please mail your DD214 (SSN blacked out) and a check/money order
   for $55 to P.O. Box 945, Rome, GA 30162.
 </p>
 </form>
+
+{{< form-flash >}}

@@ -23,14 +23,16 @@ Guests and prospective members are welcome.
 
 ## Send Us a Message
 
+<div id="form-error-region" class="form-error" role="alert" hidden></div>
+
 <form class="form" action="/_form/contact.php" method="POST" novalidate>
   <div class="form-field">
-    <label for="contact-name">Your name <span class="form-required" aria-hidden="true">*</span></label>
+    <label for="contact-name">Your name <span class="form-required" aria-hidden="true">*</span><span class="visually-hidden"> (required)</span></label>
     <input id="contact-name" name="name" type="text" autocomplete="name" required>
   </div>
 
   <div class="form-field">
-    <label for="contact-email">Email <span class="form-required" aria-hidden="true">*</span></label>
+    <label for="contact-email">Email <span class="form-required" aria-hidden="true">*</span><span class="visually-hidden"> (required)</span></label>
     <input id="contact-email" name="email" type="email" autocomplete="email" required>
   </div>
 
@@ -40,7 +42,7 @@ Guests and prospective members are welcome.
   </div>
 
   <div class="form-field">
-    <label for="contact-subject">Send to <span class="form-required" aria-hidden="true">*</span></label>
+    <label for="contact-subject">Send to <span class="form-required" aria-hidden="true">*</span><span class="visually-hidden"> (required)</span></label>
     <select id="contact-subject" name="subject" required>
       <option value="">Choose a recipient…</option>
       <option value="commander">Commander Albert Hollis</option>
@@ -53,8 +55,9 @@ Guests and prospective members are welcome.
   </div>
 
   <div class="form-field">
-    <label for="contact-message">Suggestion, question, or concern <span class="form-required" aria-hidden="true">*</span></label>
-    <textarea id="contact-message" name="message" rows="6" required></textarea>
+    <label for="contact-message">Suggestion, question, or concern <span class="form-required" aria-hidden="true">*</span><span class="visually-hidden"> (required)</span></label>
+    <textarea id="contact-message" name="message" rows="6" required aria-describedby="contact-message-help"></textarea>
+    <p id="contact-message-help" class="form-help">Tell us what you'd like to discuss; please include any details that would help us respond.</p>
   </div>
 
   <!-- Honeypot field — bots fill this, humans don't see it -->
@@ -64,8 +67,10 @@ Guests and prospective members are welcome.
   </div>
 
   <button type="submit" class="form-submit">Send Message</button>
-  <p class="form-help">
+  <p class="form-help" id="contact-submit-help">
     We try to respond within a few days. For urgent matters, please call the
     post directly.
   </p>
 </form>
+
+{{< form-flash >}}

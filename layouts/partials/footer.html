@@ -15,7 +15,8 @@
       <h2 class="footer-title">Resources</h2>
       <ul class="footer-links">
         {{- range site.Menus.footer }}
-        <li><a href="{{ .URL }}"{{ if hasPrefix .URL "http" }} rel="noopener noreferrer"{{ end }}>{{ .Name }}</a></li>
+        {{- $isExternal := hasPrefix .URL "http" -}}
+        <li><a href="{{ .URL }}"{{ if $isExternal }} rel="noopener noreferrer" target="_blank" class="link-external"{{ end }}>{{ .Name }}{{ if $isExternal }}<span class="visually-hidden"> (opens in a new tab)</span>{{ end }}</a></li>
         {{- end }}
       </ul>
     </div>

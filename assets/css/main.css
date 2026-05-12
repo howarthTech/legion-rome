@@ -199,9 +199,11 @@ address { font-style: normal; }
   font-weight: 600;
 }
 .brand-mark {
-  font-size: 1.5rem;
-  color: var(--gold);
-  line-height: 1;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  /* Subtle drop shadow so the gold seal reads against the navy header */
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-line1 {
@@ -215,14 +217,33 @@ address { font-style: normal; }
   font-size: 1.0625rem;
 }
 
-/* Nav toggle (mobile) */
+/* Desktop bump — same breakpoint as the inline nav. Larger seal, larger
+   wordmark line-2, slightly larger eyebrow. Mobile stays compact so the
+   hamburger button still fits comfortably. */
+@media (min-width: 900px) {
+  .brand { gap: var(--space-4); }
+  .brand-mark { width: 64px; height: 64px; }
+  .brand-line1 { font-size: 0.875rem; letter-spacing: 0.1em; }
+  .brand-line2 { font-size: 1.5rem; letter-spacing: -0.005em; }
+  .header-inner { padding-block: var(--space-4); }
+}
+
+/* Nav toggle (mobile). Sized to the WCAG 2.5.5 touch target minimum
+   (44 × 44 CSS px). The bars themselves are 24px wide inside that hit area. */
 .nav-toggle {
   display: inline-flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 2.25rem; height: 1.5rem;
-  background: transparent; border: 0; padding: 0;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 10px 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
 }
+.nav-toggle:hover { background: rgba(255, 255, 255, 0.08); }
+.nav-toggle-bar { width: 24px; }
 .nav-toggle-bar {
   display: block;
   height: 3px;
@@ -276,17 +297,30 @@ address { font-style: normal; }
   }
   .primary-nav ul {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-1);
     padding: 0;
   }
   .primary-nav a {
     padding: var(--space-2) var(--space-3);
     border-left: 0;
-    border-bottom: 3px solid transparent;
+    /* Faded gold underline at rest — always visible, signals interactivity */
+    border-bottom: 2px solid rgba(200, 168, 90, 0.35);
     font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+    transition: border-bottom-color 0.15s, color 0.12s, background 0.15s;
   }
-  .primary-nav a:hover, .primary-nav a:focus { border-bottom-color: var(--gold); border-left: 0; }
-  .primary-nav a[aria-current="page"] { border-bottom-color: var(--red); border-left: 0; }
+  .primary-nav a:hover,
+  .primary-nav a:focus {
+    border-bottom-color: var(--gold);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .primary-nav a[aria-current="page"] {
+    border-bottom-color: var(--red);
+    color: #fff;
+  }
 }
 
 /* ---------- Main ---------- */
@@ -1066,6 +1100,55 @@ address { font-style: normal; }
 .form textarea { min-height: 8rem; resize: vertical; }
 .form-required { color: var(--red); font-weight: 700; }
 .form-help { font-size: 0.8125rem; color: var(--muted); margin: 0; }
+
+/* Server-rendered error region. role="alert" + visible styling so user
+   can't miss it. Used by forms that POST to PHP endpoints and want to
+   surface a server-side validation failure inline. */
+.form-error {
+  background: #fce8ec;
+  color: #7a0f24;
+  border: 1px solid #f0b8c4;
+  border-left: 4px solid var(--red);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: 0.9375rem;
+}
+.form-success {
+  background: #e8f5ec;
+  color: #1d5a2d;
+  border: 1px solid #bcdcc5;
+  border-left: 4px solid var(--green, #2f7a3e);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: 0.9375rem;
+}
+
+/* External-link icon — applied via a small partial so we don't have to
+   remember to add the markup at every link site. The pseudo-element only
+   renders for links that opt in via class="link-external". */
+.link-external::after {
+  content: "↗";
+  margin-left: 0.25em;
+  font-size: 0.85em;
+  color: currentColor;
+  opacity: 0.6;
+  text-decoration: none;
+  display: inline-block;
+}
+.link-external:hover::after { opacity: 1; }
+
+/* Table reflow wrapper — let wide tables scroll horizontally instead of
+   blowing out the viewport. WCAG 1.4.10 (reflow): content must reflow at
+   320px without horizontal scrolling, *except* for content that requires
+   2D layout (tables qualify per the spec). */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Preserve focus visibility when scrolled */
+  scrollbar-color: var(--rule-d) var(--bg);
+}
 .form-submit {
   background: var(--navy);
   color: #fff;

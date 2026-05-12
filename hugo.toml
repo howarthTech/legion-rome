@@ -114,6 +114,10 @@ publishDir = "public"
   url = "/flag-etiquette/"
   weight = 10
 [[menu.footer]]
+  name = "Accessibility"
+  url = "/accessibility/"
+  weight = 15
+[[menu.footer]]
   name = "The American Legion (National)"
   url = "https://www.legion.org/"
   weight = 20

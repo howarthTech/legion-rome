@@ -165,10 +165,37 @@ function rl_send_email($to, string $subject, string $textBody, ?string $replyTo 
 
 // ---------- Response helpers -------------------------------------------------
 
+/**
+ * Fail with a message. If HTTP_REFERER is present (i.e. the user came from
+ * a form on our own site), redirect back to that form with the error in the
+ * URL — the form's <form-flash> shortcode will surface it in the page's
+ * role="alert" region. Otherwise fall back to a plain-text response that
+ * names the issue and offers a way back.
+ *
+ * Why redirect-back instead of inline error rendering: keeps the PHP handler
+ * stateless and avoids duplicating Hugo's site chrome in PHP — the styled
+ * error appears in the same page the user just submitted.
+ */
 function rl_fail(int $status, string $message): never {
+    $referer = $_SERVER['HTTP_REFERER'] ?? '';
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    // Only redirect back if the referer is on our own host — never to an
+    // attacker-controlled URL.
+    if ($referer && $host && str_contains($referer, $host)) {
+        $sep = str_contains($referer, '?') ? '&' : '?';
+        $url = $referer . $sep . 'err=' . urlencode($message);
+        header("Location: $url", true, 303);
+        exit;
+    }
+    // Fallback: minimal HTML so the response is at least semantically marked
+    // up rather than a bare text/plain dump. role="alert" announces it.
     http_response_code($status);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo $message;
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!doctype html><html lang="en"><head><meta charset="utf-8">';
+    echo '<title>Form error · American Legion Post 5</title></head><body>';
+    echo '<main><h1>We couldn\'t process that submission</h1>';
+    echo '<p role="alert">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</p>';
+    echo '<p><a href="/">Return to the home page</a></p></main></body></html>';
     exit;
 }
 

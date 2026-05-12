@@ -39,13 +39,13 @@
     </div>
 
     <!-- Lightbox dialog — driven by /js/lightbox.js -->
-    <dialog class="lightbox" id="lightbox">
-      <button class="lightbox-close" data-lightbox-close aria-label="Close">×</button>
-      <button class="lightbox-prev" data-lightbox-prev aria-label="Previous photo">‹</button>
-      <button class="lightbox-next" data-lightbox-next aria-label="Next photo">›</button>
+    <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+      <button class="lightbox-close" data-lightbox-close aria-label="Close photo viewer" type="button">×</button>
+      <button class="lightbox-prev" data-lightbox-prev aria-label="Previous photo" type="button">‹</button>
+      <button class="lightbox-next" data-lightbox-next aria-label="Next photo" type="button">›</button>
       <figure class="lightbox-figure">
         <img class="lightbox-img" alt="" decoding="async">
-        <figcaption class="lightbox-caption"></figcaption>
+        <figcaption class="lightbox-caption" aria-live="polite"></figcaption>
       </figure>
     </dialog>
     {{- else }}

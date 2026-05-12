@@ -1,0 +1,33 @@
+{{- /*
+  Reads ?err=... or ?ok=... from the URL after a PHP form redirect and
+  surfaces it in the live region the form template has already wired up
+  (#form-error-region). Tiny inline script — no framework, no dependencies.
+
+  Used on /contact/ and /membership/apply/. Safe to include on any page;
+  it does nothing if the region or query params aren't present.
+*/ -}}
+<script>
+(function () {
+  'use strict';
+  var region = document.getElementById('form-error-region');
+  if (!region) return;
+  var params = new URLSearchParams(window.location.search);
+  var err = params.get('err');
+  var ok  = params.get('ok');
+  if (err) {
+    region.textContent = err;
+    region.classList.remove('form-success');
+    region.classList.add('form-error');
+    region.removeAttribute('hidden');
+    region.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    region.focus({ preventScroll: true });
+  } else if (ok) {
+    region.textContent = ok;
+    region.setAttribute('role', 'status');     // status, not alert, for non-error
+    region.classList.remove('form-error');
+    region.classList.add('form-success');
+    region.removeAttribute('hidden');
+    region.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+})();
+</script>
