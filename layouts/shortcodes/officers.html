@@ -1,0 +1,13 @@
+{{- /* Renders the post officer roster from data/officers.yaml */ -}}
+<ul class="roster">
+  {{- range sort site.Data.officers.officers "weight" }}
+  <li>
+    <div class="roster-role">{{ .role }}</div>
+    <div class="roster-detail">
+      <strong>{{ .name }}</strong><br>
+      {{ with .phone }}<a href="tel:{{ replaceRE "[^0-9]" "" . }}">{{ . }}</a>{{ end }}
+      {{ with .email }}{{ if . }} · <a href="mailto:{{ . }}">{{ . }}</a>{{ end }}{{ end }}
+    </div>
+  </li>
+  {{- end }}
+</ul>

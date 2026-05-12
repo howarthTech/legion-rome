@@ -1,0 +1,60 @@
+{{ define "main" }}
+<article class="page page-album">
+  <div class="container">
+    <p class="album-breadcrumb">
+      <a href="/gallery/">← All Albums</a>
+    </p>
+    <header class="album-header">
+      <h1>{{ .Title }}</h1>
+      <time datetime="{{ .Date.Format "2006-01-02" }}" class="album-date">
+        {{ .Date.Format "January 2, 2006" }}
+      </time>
+      {{- with .Description }}<p class="page-lede">{{ . }}</p>{{ end -}}
+    </header>
+
+    <div class="prose">
+      {{ .Content }}
+    </div>
+
+    {{- $images := .Resources.ByType "image" -}}
+    {{- if $images }}
+    <div class="photo-grid" data-lightbox-album>
+      {{- range $images }}
+      {{- $thumb := .Fill "600x600 q80 webp" -}}
+      {{- $full  := .Resize "1800x q85 webp" -}}
+      {{- $caption := .Title | default "" -}}
+      <figure class="photo-card">
+        <a href="{{ $full.RelPermalink }}" data-lightbox-trigger
+           data-full="{{ $full.RelPermalink }}"
+           data-caption="{{ $caption }}"
+           aria-label="{{ if $caption }}{{ $caption }}{{ else }}Open photo{{ end }}">
+          <img src="{{ $thumb.RelPermalink }}"
+               width="{{ $thumb.Width }}" height="{{ $thumb.Height }}"
+               alt="{{ $caption }}"
+               loading="lazy" decoding="async">
+        </a>
+        {{- with $caption }}<figcaption>{{ . }}</figcaption>{{ end -}}
+      </figure>
+      {{- end }}
+    </div>
+
+    <!-- Lightbox dialog — driven by /js/lightbox.js -->
+    <dialog class="lightbox" id="lightbox">
+      <button class="lightbox-close" data-lightbox-close aria-label="Close">×</button>
+      <button class="lightbox-prev" data-lightbox-prev aria-label="Previous photo">‹</button>
+      <button class="lightbox-next" data-lightbox-next aria-label="Next photo">›</button>
+      <figure class="lightbox-figure">
+        <img class="lightbox-img" alt="" decoding="async">
+        <figcaption class="lightbox-caption"></figcaption>
+      </figure>
+    </dialog>
+    {{- else }}
+    <p class="events-empty">This album doesn't have any photos yet.</p>
+    {{- end }}
+
+    <hr class="rule">
+    <p><a href="/gallery/">← Back to all albums</a></p>
+  </div>
+</article>
+<script src="{{ "/js/lightbox.js" | relURL }}" defer></script>
+{{ end }}

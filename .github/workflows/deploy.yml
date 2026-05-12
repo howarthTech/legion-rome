@@ -1,0 +1,115 @@
+name: Build & Deploy
+
+# Triggers:
+# - On every push to main (the canonical change-the-site path)
+# - Daily at 5:00 AM UTC = 1:00 AM Eastern, so past/upcoming event split
+#   stays accurate even when no one pushes for a while
+# - Manually from the Actions tab when needed
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch: {}
+
+# Prevent overlapping deploys — if a new push comes in while we're building,
+# cancel the older one
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    env:
+      HUGO_VERSION: "0.140.0"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Hugo needs lastmod git info disabled (we set enableGitInfo=false)
+          # but a shallow clone is still fine
+          fetch-depth: 1
+
+      - name: Install Hugo (extended)
+        run: |
+          wget -q "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" \
+            -O /tmp/hugo.tar.gz
+          tar -xzf /tmp/hugo.tar.gz -C /tmp hugo
+          sudo mv /tmp/hugo /usr/local/bin/hugo
+          hugo version
+
+      - name: Build site
+        run: |
+          # Production build — TODO banners disappear, output goes in ./public
+          hugo \
+            --environment production \
+            --minify \
+            --gc \
+            --cleanDestinationDir
+          echo "Built $(find public -type f | wc -l) files."
+
+      - name: Copy PHP form endpoints into publish dir
+        run: |
+          # Hugo doesn't know about the forms/ tree (PHP isn't a Hugo concept).
+          # Copy them into the publish dir at /_form/ so rsync ships them too.
+          mkdir -p public/_form
+          cp forms/*.php public/_form/
+          # _shared.php is included by the others; not directly hit by the
+          # web, but php_fastcgi will require()? it from disk.
+          chmod 0644 public/_form/*.php
+
+      - name: Install rsync + SSH client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq rsync openssh-client
+
+      - name: Configure SSH
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy via rsync
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}        # e.g. osh-vps-deploy
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}        # e.g. claude
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}        # e.g. /srv/www/romelegion.org/
+        run: |
+          # --delete-after: remove files on the server that no longer exist in
+          # the build, but only after a successful transfer (so a broken build
+          # doesn't wipe the live site).
+          # -a: archive (preserve mode, mtime, etc.)
+          # -z: compress in transit
+          # --human-readable + --stats: nicer logs
+          rsync \
+            -az \
+            --delete-after \
+            --human-readable \
+            --stats \
+            -e "ssh -i ~/.ssh/deploy_key -p 2222 -o UserKnownHostsFile=~/.ssh/known_hosts" \
+            public/ \
+            "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
+
+      - name: Verify deploy
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          # Smoke test the live site — homepage should 200 and contain our title
+          set -e
+          response=$(curl -fsS --max-time 15 https://romelegion.org/)
+          if echo "$response" | grep -q "American Legion Post 5"; then
+            echo "✓ Homepage live and contains expected title"
+          else
+            echo "✗ Homepage didn't contain expected content; check deploy"
+            exit 1
+          fi

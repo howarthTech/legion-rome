@@ -1,0 +1,30 @@
+{{- /*
+  Per-event action buttons: Add to Google Calendar + .ics download.
+  Argument: an event Page.
+  Used on event cards (upcoming only) and on event detail pages.
+*/ -}}
+{{- $p := . -}}
+{{- $start := $p.Date.UTC.Format "20060102T150405Z" -}}
+{{- $endTime := $p.Date.Add (time.ParseDuration "2h") -}}
+{{- with $p.Params.endDate -}}{{- $endTime = time.AsTime . -}}{{- end -}}
+{{- $end := $endTime.UTC.Format "20060102T150405Z" -}}
+{{- $details := printf "%s\n\nMore info: %s" ($p.Params.description | default "") $p.Permalink -}}
+{{- $gcalURL := printf "https://www.google.com/calendar/render?action=TEMPLATE&text=%s&dates=%s/%s&details=%s&location=%s"
+    ($p.Title | urlquery)
+    $start $end
+    ($details | urlquery)
+    ($p.Params.location | default "" | urlquery)
+-}}
+{{- /* Look up the .ics output format for this page (key is lowercase) */ -}}
+{{- $ics := "" -}}
+{{- with $p.OutputFormats.Get "eventcal" }}{{ $ics = .RelPermalink }}{{ end -}}
+<div class="event-actions">
+  <a href="{{ $gcalURL }}" target="_blank" rel="noopener noreferrer" class="event-action">
+    <span aria-hidden="true">📅</span> Add to Google Calendar
+  </a>
+  {{- if $ics }}
+  <a href="{{ $ics }}" download class="event-action">
+    <span aria-hidden="true">⬇</span> Download .ics
+  </a>
+  {{- end }}
+</div>

@@ -1,0 +1,40 @@
+# Dev-only Caddyfile — used by docker-compose.dev.yml when we want to test
+# the PHP form endpoints end-to-end locally. Mimics the production routing.
+#
+# In production, Caddy is on the VPS host with auto-HTTPS; here we run it in
+# a container on plain HTTP at :8080. PHP-FPM runs in a sibling container and
+# the static site lives in ./public.
+
+:8080 {
+    root * /srv/site
+    encode zstd gzip
+
+    # Long cache for static assets
+    @assets {
+        path *.css *.js *.woff *.woff2 *.jpg *.jpeg *.png *.webp *.avif *.svg *.ico *.ics
+    }
+    header @assets Cache-Control "public, max-age=31536000, immutable"
+
+    # Only the known form endpoints get PHP-FPM
+    @formContact path /_form/contact.php
+    @formApplication path /_form/application.php
+    handle @formContact {
+        php_fastcgi php-fpm:9000
+    }
+    handle @formApplication {
+        php_fastcgi php-fpm:9000
+    }
+
+    # Any other .php is 404 — same posture as production
+    @otherPhp path *.php
+    respond @otherPhp 404
+
+    try_files {path} {path}/ {path}.html
+    file_server
+
+    handle_errors {
+        @404 expression {http.error.status_code} == 404
+        rewrite @404 /404.html
+        file_server
+    }
+}

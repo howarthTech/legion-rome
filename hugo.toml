@@ -1,0 +1,127 @@
+# Hugo configuration for romelegion.org
+# Shanklin Attaway American Legion Post 5 — Rome, GA
+
+baseURL = "https://romelegion.org/"
+languageCode = "en-us"
+title = "American Legion Post 5 — Rome, GA"
+enableRobotsTXT = true
+enableGitInfo = false
+
+# Build content with future-dated front matter. Hugo's default is to treat
+# future dates like scheduled blog posts (excluded from builds) — for an events
+# calendar that's backwards. We want future events to render.
+buildFuture = true
+
+# Disable Hugo's default taxonomies — this isn't a blog, we have no tags or
+# categories. Otherwise Hugo generates empty /tags/ and /categories/ pages
+# and pollutes the sitemap.
+disableKinds = ["taxonomy", "term"]
+
+# Build output goes here; CI rsyncs this to /srv/www/romelegion.org/ on the VPS
+publishDir = "public"
+
+# Pretty URLs
+[permalinks]
+  events = "/events/:slug/"
+  news = "/news/:slug/"
+
+# Markdown renderer settings
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true  # Allow inline HTML in markdown for the few cases we need it
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+  [markup.highlight]
+    style = "github"
+    noClasses = false
+
+# Image processing defaults (used for photo gallery later)
+[imaging]
+  resampleFilter = "Lanczos"
+  quality = 82
+  anchor = "Smart"
+
+# Site-wide parameters — available to templates as .Site.Params.<key>
+[params]
+  description = "Shanklin Attaway American Legion Post 5 — serving veterans, families, and the Rome, Georgia community since 1925."
+  postName = "Shanklin Attaway Post 5"
+  postShortName = "Post 5"
+  charterYear = 1925
+  mailingAddress = "P.O. Box 945, Rome, GA 30162"
+  meetingLocation = "The Farm — 493 Jones Bend Rd NE, Rome, GA 30165"
+  meetingSchedule = "2nd Monday of each month at 6:00 PM"
+  postEmail = "romepost5@gmail.com"
+  # TODO: phone conflict on existing site (951-204-8635 vs 951-201-8635); 951 area code is California — verify
+  postPhone = "(951) 204-8635"
+  # TODO: replace with Post 5's actual Facebook page once we confirm the URL
+  facebookURL = "https://www.facebook.com/the.american.legion"
+
+# Output formats
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+
+# Custom output format: per-event .ics calendar download.
+# Activated on event pages via `cascade.outputs` in content/events/_index.md.
+# URL ends up like /events/<slug>/event.ics
+[outputFormats]
+  [outputFormats.EventCal]
+    mediaType = "text/calendar"
+    baseName = "event"
+    isPlainText = true
+    notAlternative = false
+
+# Primary nav (rendered by layouts/partials/nav.html)
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 10
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 20
+  [[menu.main]]
+    name = "Membership"
+    url = "/membership/"
+    weight = 30
+  [[menu.main]]
+    name = "Events"
+    url = "/events/"
+    weight = 40
+  [[menu.main]]
+    name = "Auxiliary & SAL"
+    url = "/family/"
+    weight = 50
+  [[menu.main]]
+    name = "Hall Rental"
+    url = "/rental/"
+    weight = 60
+  [[menu.main]]
+    name = "Gallery"
+    url = "/gallery/"
+    weight = 65
+  [[menu.main]]
+    name = "Contact"
+    url = "/contact/"
+    weight = 70
+
+# Footer secondary links
+[[menu.footer]]
+  name = "Flag Etiquette"
+  url = "/flag-etiquette/"
+  weight = 10
+[[menu.footer]]
+  name = "The American Legion (National)"
+  url = "https://www.legion.org/"
+  weight = 20
+[[menu.footer]]
+  name = "Georgia American Legion"
+  url = "https://georgialegion.org/"
+  weight = 30
+[[menu.footer]]
+  name = "myLegion Portal"
+  url = "https://mylegion.org/PersonifyEbusiness/Home"
+  weight = 40

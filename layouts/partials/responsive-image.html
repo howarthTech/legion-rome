@@ -1,0 +1,82 @@
+{{- /*
+  Responsive image partial.
+
+  Generates a <picture> element with WebP + JPG fallbacks at multiple widths,
+  using Hugo's image pipeline. The original goes in assets/images/<file>.
+
+  Args (a dict):
+    src       — path relative to assets/, e.g. "images/hero-meeting.jpg"
+    alt       — alt text (REQUIRED; pass "" only if truly decorative + role="presentation")
+    sizes     — sizes attribute, default "100vw"
+    class     — wrapping <img> class
+    widths    — slice of widths to generate. Default: 480, 800, 1200, 1800
+    loading   — "lazy" (default) or "eager" (for above-the-fold like the hero)
+    fetchpriority — "high" or "auto" (default)
+    quality   — JPEG/WebP quality 1-100, default 80
+    fit       — Hugo image method: "Resize", "Fit", or "Fill". Default "Resize".
+                For "Fill" pass `aspect` like "16x9" via the height in the width
+                spec (e.g. "1200x675" — Hugo treats "WxH q90" as the spec).
+*/ -}}
+{{- $src     := .src -}}
+{{- $alt     := .alt -}}
+{{- $sizes   := .sizes   | default "100vw" -}}
+{{- $class   := .class   | default "" -}}
+{{- $widths  := .widths  | default (slice 480 800 1200 1800) -}}
+{{- $loading := .loading | default "lazy" -}}
+{{- $fp      := .fetchpriority | default "auto" -}}
+{{- $quality := .quality | default 80 -}}
+{{- $fit     := .fit     | default "Resize" -}}
+
+{{- $orig := resources.Get $src -}}
+{{- if not $orig -}}
+  {{- errorf "responsive-image: source not found in assets/: %q" $src -}}
+{{- end -}}
+
+{{- /* Cap widths at the original's actual width to avoid upscaling */ -}}
+{{- $maxW := $orig.Width -}}
+{{- $usableWidths := slice -}}
+{{- range $widths -}}
+  {{- if le . $maxW -}}{{- $usableWidths = $usableWidths | append . -}}{{- end -}}
+{{- end -}}
+{{- if eq (len $usableWidths) 0 -}}{{- $usableWidths = slice $maxW -}}{{- end -}}
+
+{{- /* Build WebP + JPG srcsets */ -}}
+{{- $webpSrcs := slice -}}
+{{- $jpgSrcs  := slice -}}
+{{- $largest  := index $usableWidths (sub (len $usableWidths) 1) -}}
+{{- range $w := $usableWidths -}}
+  {{- $spec := printf "%dx q%d webp" $w $quality -}}
+  {{- $jspec := printf "%dx q%d" $w $quality -}}
+  {{- $webp := "" -}}
+  {{- $jpg  := "" -}}
+  {{- if eq $fit "Fit" -}}
+    {{- $webp = $orig.Fit $spec -}}
+    {{- $jpg  = $orig.Fit $jspec -}}
+  {{- else if eq $fit "Fill" -}}
+    {{- $webp = $orig.Fill $spec -}}
+    {{- $jpg  = $orig.Fill $jspec -}}
+  {{- else -}}
+    {{- $webp = $orig.Resize $spec -}}
+    {{- $jpg  = $orig.Resize $jspec -}}
+  {{- end -}}
+  {{- $webpSrcs = $webpSrcs | append (printf "%s %dw" $webp.RelPermalink $w) -}}
+  {{- $jpgSrcs  = $jpgSrcs  | append (printf "%s %dw" $jpg.RelPermalink $w) -}}
+  {{- if eq $w $largest -}}
+    {{- $.Scratch.Set "fallbackJpg" $jpg -}}
+  {{- end -}}
+{{- end -}}
+{{- $fallback := $.Scratch.Get "fallbackJpg" -}}
+
+<picture>
+  <source type="image/webp" srcset="{{ delimit $webpSrcs ", " }}" sizes="{{ $sizes }}">
+  <source type="image/jpeg" srcset="{{ delimit $jpgSrcs ", " }}" sizes="{{ $sizes }}">
+  <img
+    src="{{ $fallback.RelPermalink }}"
+    width="{{ $fallback.Width }}"
+    height="{{ $fallback.Height }}"
+    alt="{{ $alt }}"
+    {{- if $class }} class="{{ $class }}"{{ end }}
+    loading="{{ $loading }}"
+    fetchpriority="{{ $fp }}"
+    decoding="async">
+</picture>

@@ -1,0 +1,27 @@
+<footer class="site-footer" role="contentinfo">
+  <div class="container footer-grid">
+    <div class="footer-col">
+      <h2 class="footer-title">{{ site.Params.postName }}</h2>
+      <p class="footer-lede">American Legion Post 5 · Chartered {{ site.Params.charterYear }} · Rome, Georgia</p>
+      <address class="footer-address">
+        <strong>Meets:</strong> {{ site.Params.meetingSchedule }}<br>
+        <strong>Location:</strong> {{ site.Params.meetingLocation }}<br>
+        <strong>Mail:</strong> {{ site.Params.mailingAddress }}<br>
+        <strong>Phone:</strong> <a href="tel:{{ replaceRE "[^0-9]" "" site.Params.postPhone }}">{{ site.Params.postPhone }}</a><br>
+        <strong>Email:</strong> <a href="mailto:{{ site.Params.postEmail }}">{{ site.Params.postEmail }}</a>
+      </address>
+    </div>
+    <div class="footer-col">
+      <h2 class="footer-title">Resources</h2>
+      <ul class="footer-links">
+        {{- range site.Menus.footer }}
+        <li><a href="{{ .URL }}"{{ if hasPrefix .URL "http" }} rel="noopener noreferrer"{{ end }}>{{ .Name }}</a></li>
+        {{- end }}
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; {{ now.Year }} {{ site.Params.postName }}. All rights reserved.</p>
+    <p class="footer-meta">For God and Country.</p>
+  </div>
+</footer>

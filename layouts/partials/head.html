@@ -1,0 +1,58 @@
+{{- $title := .Title -}}
+{{- if .IsHome -}}{{ $title = site.Title }}{{- else -}}{{ $title = printf "%s — %s" .Title site.Title }}{{- end }}
+{{- $description := .Description | default site.Params.description -}}
+{{- $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ $title }}</title>
+<meta name="description" content="{{ $description }}">
+<meta name="theme-color" content="#0a3161">
+
+<!-- Open Graph / social -->
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $description }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ site.Title }}">
+<meta name="twitter:card" content="summary">
+
+<!-- Schema.org Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "{{ site.Params.postName }}",
+  "alternateName": "American Legion Post 5 Rome GA",
+  "url": "{{ site.BaseURL }}",
+  "email": "{{ site.Params.postEmail }}",
+  "telephone": "{{ site.Params.postPhone }}",
+  "foundingDate": "{{ site.Params.charterYear }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "P.O. Box 945",
+    "addressLocality": "Rome",
+    "addressRegion": "GA",
+    "postalCode": "30162",
+    "addressCountry": "US"
+  },
+  "location": {
+    "@type": "Place",
+    "name": "The Farm (Walker Farm)",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "493 Jones Bend Rd NE",
+      "addressLocality": "Rome",
+      "addressRegion": "GA",
+      "postalCode": "30165",
+      "addressCountry": "US"
+    }
+  }
+}
+</script>
+
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+<link rel="canonical" href="{{ .Permalink }}">
+{{- with .OutputFormats.Get "RSS" }}
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .RelPermalink }}">
+{{- end }}
+<link rel="icon" href="{{ "/favicon.svg" | relURL }}" type="image/svg+xml">

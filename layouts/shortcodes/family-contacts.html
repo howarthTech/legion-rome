@@ -1,0 +1,12 @@
+{{- /* Renders the Auxiliary / SAL contacts from data/officers.yaml */ -}}
+<ul class="roster">
+  {{- range sort site.Data.officers.family_contacts "weight" }}
+  <li>
+    <div class="roster-role">{{ .role }}</div>
+    <div class="roster-detail">
+      <strong>{{ .name }}</strong><br>
+      <a href="tel:{{ replaceRE "[^0-9]" "" .phone }}">{{ .phone }}</a>
+    </div>
+  </li>
+  {{- end }}
+</ul>

@@ -1,0 +1,34 @@
+{{- /*
+  iCalendar (.ics) generator for a single event page.
+  RFC 5545 requires CRLF line endings — we add `\r` at end of every line.
+  Text fields must escape: \  ; , and newlines.
+*/ -}}
+{{- /* RFC 5545 escape: \ → \\, ; → \;, , → \,, newline → \n. In Go regexp
+       replacement strings backslash is LITERAL (only $ is special), so one
+       backslash in the replacement yields one in the output. */ -}}
+{{- $title := .Title | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
+{{- $loc   := .Params.location | default "" | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
+{{- $desc  := .Params.description | default "" | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
+{{- $start := .Date.UTC.Format "20060102T150405Z" -}}
+{{- $endTime := .Date.Add (time.ParseDuration "2h") -}}
+{{- with .Params.endDate -}}{{- $endTime = time.AsTime . -}}{{- end -}}
+{{- $end := $endTime.UTC.Format "20060102T150405Z" -}}
+{{- $stamp := now.UTC.Format "20060102T150405Z" -}}
+{{- $uid := printf "%s@romelegion.org" .File.ContentBaseName -}}
+BEGIN:VCALENDAR{{ "\r" }}
+VERSION:2.0{{ "\r" }}
+PRODID:-//romelegion.org//Post 5 Events//EN{{ "\r" }}
+CALSCALE:GREGORIAN{{ "\r" }}
+METHOD:PUBLISH{{ "\r" }}
+BEGIN:VEVENT{{ "\r" }}
+UID:{{ $uid }}{{ "\r" }}
+DTSTAMP:{{ $stamp }}{{ "\r" }}
+DTSTART:{{ $start }}{{ "\r" }}
+DTEND:{{ $end }}{{ "\r" }}
+SUMMARY:{{ $title }}{{ "\r" }}
+DESCRIPTION:{{ if $desc }}{{ $desc }}\nMore info: {{ .Permalink }}{{ else }}More info: {{ .Permalink }}{{ end }}{{ "\r" }}
+LOCATION:{{ $loc }}{{ "\r" }}
+URL:{{ .Permalink }}{{ "\r" }}
+STATUS:CONFIRMED{{ "\r" }}
+END:VEVENT{{ "\r" }}
+END:VCALENDAR{{ "\r" }}

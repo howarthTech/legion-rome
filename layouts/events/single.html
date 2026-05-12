@@ -1,0 +1,48 @@
+{{ define "main" }}
+{{- $isPast := lt .Date now -}}
+<article class="page page-event{{ if $isPast }} page-event-past{{ end }}">
+  <div class="container container-narrow">
+    <p class="event-breadcrumb">
+      <a href="/events/">← All Events</a>
+    </p>
+    <header class="event-header">
+      {{- if $isPast }}<p class="event-badge">Past Event</p>{{- end }}
+      <h1>{{ .Title }}</h1>
+      <dl class="event-detail">
+        <dt>Date</dt>
+        <dd>
+          <time datetime="{{ .Date.Format "2006-01-02T15:04" }}">
+            {{ .Date.Format "Monday, January 2, 2006" }}
+          </time>
+        </dd>
+        <dt>Time</dt>
+        <dd>
+          {{ .Date.Format "3:04 PM" }}
+          {{- with .Params.endDate }} – {{ (time.AsTime .).Format "3:04 PM" }}{{ end }}
+        </dd>
+        <dt>Location</dt>
+        <dd>
+          {{ .Params.location }}
+          {{- with .Params.location }}
+            <br><a href="https://www.google.com/maps/search/?api=1&query={{ . | urlquery }}" target="_blank" rel="noopener noreferrer" class="event-map-link">View on Google Maps →</a>
+          {{ end -}}
+        </dd>
+        {{- with .Params.contact }}
+        <dt>Contact</dt>
+        <dd>{{ . }}</dd>
+        {{- end }}
+      </dl>
+      {{- if not $isPast }}
+      {{- partial "event-actions.html" . -}}
+      {{- end }}
+    </header>
+
+    <div class="prose">
+      {{ .Content }}
+    </div>
+
+    <hr class="rule">
+    <p><a href="/events/">← Back to all events</a></p>
+  </div>
+</article>
+{{ end }}

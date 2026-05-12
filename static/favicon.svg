@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Post 5 star">
+  <rect width="64" height="64" rx="8" fill="#0a3161"/>
+  <path d="M32 8 L38.4 24.8 L56 24.8 L42 35.6 L47.2 52 L32 41.6 L16.8 52 L22 35.6 L8 24.8 L25.6 24.8 Z" fill="#c8a85a"/>
+  <text x="32" y="40" font-family="Georgia, serif" font-size="14" font-weight="700" text-anchor="middle" fill="#0a3161">5</text>
+</svg>

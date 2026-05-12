@@ -1,0 +1,31 @@
+# Build output
+/public/
+/resources/
+.hugo_build.lock
+
+# Provided source images — the ones we actually use are already copied into
+# assets/images/ and content/gallery/. Keeping the originals out of git
+# (they're ~8 MB and identical to what's already tracked).
+/providedImages/
+
+# Local secrets (dev-only — production secrets live on the VPS at /srv/secrets/)
+/dev/secrets/*.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor noise
+.idea/
+.vscode/
+*.swp
+*~
+
+# Node modules (if we ever add JS tooling)
+node_modules/
+
+# Hugo cache
+.hugo_cache/
+
+# Logs
+*.log

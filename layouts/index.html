@@ -1,0 +1,116 @@
+{{ define "main" }}
+<section class="hero hero-bg" role="banner">
+  <div class="hero-bg-image" aria-hidden="true">
+    {{ partial "responsive-image.html" (dict
+      "src" "images/farm-grounds.jpg"
+      "alt" ""
+      "sizes" "100vw"
+      "class" "hero-image"
+      "loading" "eager"
+      "fetchpriority" "high"
+    ) }}
+  </div>
+  <div class="container hero-content hero-grid">
+    <div class="hero-text">
+      <p class="hero-eyebrow">Veterans Serving Veterans · Since {{ site.Params.charterYear }}</p>
+      <h1 class="hero-title">Shanklin Attaway Post 5 &mdash; Rome, Georgia</h1>
+      <p class="hero-lede">
+        We welcome veterans from every branch and every era. Through service, fellowship,
+        and community support, we honor those who served and invest in the next generation.
+      </p>
+      <div class="hero-actions">
+        <a href="/membership/" class="btn btn-primary">Become a Member</a>
+        <a href="/events/" class="btn btn-secondary">See Upcoming Events</a>
+      </div>
+    </div>
+    <figure class="hero-figure">
+      {{ partial "responsive-image.html" (dict
+        "src" "images/hero-meeting.jpg"
+        "alt" "Two Post 5 officers in dress uniform with 'ROME, GA' caps at a meeting, an American flag visible behind them"
+        "sizes" "(min-width: 900px) 45vw, 100vw"
+        "class" "hero-meeting-image"
+        "loading" "eager"
+      ) }}
+    </figure>
+  </div>
+</section>
+
+<section class="section section-events">
+  <div class="container">
+    <header class="section-header">
+      <h2>Upcoming Events</h2>
+      <a href="/events/" class="section-link">Full calendar →</a>
+    </header>
+    {{- $eventsSection := site.GetPage "events" -}}
+    {{- $upcoming := where $eventsSection.Pages "Date" "ge" now -}}
+    {{- if $upcoming }}
+    <div class="event-grid">
+      {{- range first 4 $upcoming.ByDate }}
+        {{- partial "event-card.html" . -}}
+      {{- end }}
+    </div>
+    {{- else }}
+    <p class="events-empty">No upcoming events on the calendar right now. <a href="/events/">See past events</a> or call us at <a href="tel:{{ replaceRE "[^0-9]" "" site.Params.postPhone }}">{{ site.Params.postPhone }}</a>.</p>
+    {{- end }}
+  </div>
+</section>
+
+<section class="section section-cta">
+  <div class="container">
+    <div class="cta-grid">
+      <article class="cta-card">
+        <h2>Veterans Welcome</h2>
+        <p>
+          If you served at least one day of active duty during a qualifying period and
+          received an honorable discharge, you're eligible to join Post 5.
+        </p>
+        <a href="/membership/requirements/" class="cta-link">Check eligibility →</a>
+      </article>
+      <article class="cta-card">
+        <h2>Host Your Event</h2>
+        <p>
+          Our facilities are available for community events, family gatherings, and
+          fundraisers. Proceeds support our scholarship and service programs.
+        </p>
+        <a href="/rental/" class="cta-link">Rental information →</a>
+      </article>
+      <article class="cta-card">
+        <h2>Support Our Mission</h2>
+        <p>
+          Become a Booster or Sponsor. Every contribution funds scholarships, honor
+          guards, Memorial Day observances, and veteran outreach in Rome and Floyd County.
+        </p>
+        <a href="/contact/" class="cta-link">Reach out →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-pillars">
+  <div class="container">
+    <h2 class="section-title">The Four Pillars</h2>
+    <p class="section-lede">
+      Every American Legion post — including Post 5 — is built on four enduring pillars
+      that guide our work in Rome and across the country.
+    </p>
+    <div class="pillar-grid">
+      <div class="pillar">
+        <h3>Veterans Affairs &amp; Rehabilitation</h3>
+        <p>Advocating for and serving veterans, their families, and survivors.</p>
+      </div>
+      <div class="pillar">
+        <h3>National Security</h3>
+        <p>Supporting a strong national defense and our active-duty service members.</p>
+      </div>
+      <div class="pillar">
+        <h3>Americanism</h3>
+        <p>Promoting patriotism, citizenship, and respect for our flag and constitution.</p>
+      </div>
+      <div class="pillar">
+        <h3>Children &amp; Youth</h3>
+        <p>Supporting programs like Boys State, Oratorical Contests, and scholarships.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{{ end }}

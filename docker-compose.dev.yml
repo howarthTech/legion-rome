@@ -1,0 +1,32 @@
+# Local dev compose — only needed when you want to test form submissions
+# end-to-end. For day-to-day editing, just run `make dev` (Hugo's own server).
+#
+# Pattern matches production: Caddy serves static + routes .php to PHP-FPM.
+# Resend secrets are loaded from dev/secrets/romelegion.org.env (which is
+# mounted at the same path PHP expects in production: /srv/secrets/...).
+
+services:
+  caddy:
+    image: caddy:2.11-alpine
+    container_name: romelegion-dev-caddy
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./docker/Caddyfile.dev:/etc/caddy/Caddyfile:ro
+      - ./public:/srv/site:ro
+      - ./forms:/srv/site/_form:ro
+    depends_on:
+      - php-fpm
+    restart: unless-stopped
+
+  php-fpm:
+    image: php:8.3-fpm-alpine
+    container_name: romelegion-dev-php
+    # No published port — only Caddy talks to it on the internal network
+    volumes:
+      - ./public:/srv/site:ro
+      - ./forms:/srv/site/_form:ro
+      # Mount the dev env file at the production-equivalent path so the
+      # PHP code's hardcoded `/srv/secrets/romelegion.org.env` works as-is.
+      - ./dev/secrets:/srv/secrets:ro
+    restart: unless-stopped

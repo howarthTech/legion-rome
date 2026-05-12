@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /_form/
+Disallow: /thanks/
+
+Sitemap: https://romelegion.org/sitemap.xml

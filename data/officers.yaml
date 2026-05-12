@@ -1,0 +1,44 @@
+# Post 5 officer roster
+# TODO: phone number conflict on the existing site for Albert Hollis — 951-204-8635 (contact/officers pages) vs 951-201-8635 (events calendar). Verified value here is the more commonly-listed one. Resolve with the post.
+# TODO: 951 area code is California (Inland Empire). Verify this is correct for a commander in Rome, GA.
+
+officers:
+  - role: "Commander"
+    name: "Albert Hollis"
+    phone: "(951) 204-8635"
+    email: "romepost5@gmail.com"
+    weight: 10
+
+  - role: "Senior Vice Commander"
+    name: "George Sifuentes"
+    phone: "(706) 728-8897"
+    email: "grulo65@gmail.com"
+    weight: 20
+
+  - role: "Adjutant"
+    name: "Rick Hunt"
+    phone: "(912) 312-0258"
+    email: ""
+    weight: 30
+
+  - role: "Finance Officer"
+    name: "Richard Bingham"
+    phone: "(706) 290-4962"
+    email: ""
+    weight: 40
+
+  - role: "Post Historian"
+    name: "Will Adams"
+    phone: "(706) 368-9770"
+    email: "wjadams42@gmail.com"
+    weight: 50
+
+family_contacts:
+  - role: "Auxiliary Membership"
+    name: "Louise Burgess"
+    phone: "(706) 266-9816"
+    weight: 10
+  - role: "Sons of the American Legion"
+    name: "Ronnie Grist"
+    phone: "(678) 232-3381"
+    weight: 20

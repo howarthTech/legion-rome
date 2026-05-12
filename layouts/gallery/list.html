@@ -1,0 +1,53 @@
+{{ define "main" }}
+<section class="page">
+  <div class="container">
+    <header class="page-header">
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}<p class="page-lede">{{ . }}</p>{{ end -}}
+    </header>
+
+    <div class="prose">
+      {{ .Content }}
+    </div>
+
+    {{- $albums := .Pages.ByDate.Reverse -}}
+    {{- if $albums }}
+    <ul class="album-grid">
+      {{- range $albums }}
+      {{- /* Find the first image resource as the cover. Fall back to the
+             explicit `cover` front-matter param if set. */ -}}
+      {{- $cover := "" -}}
+      {{- with .Params.cover -}}{{- $cover = $.Resources.GetMatch . -}}{{- end -}}
+      {{- if not $cover -}}{{- $cover = (.Resources.ByType "image" | first 1) -}}{{- end -}}
+      {{- if reflect.IsSlice $cover -}}{{- $cover = index $cover 0 -}}{{- end -}}
+      <li class="album-card">
+        <a href="{{ .RelPermalink }}" class="album-link">
+          {{- if $cover }}
+            {{- $thumb := $cover.Fill "600x400 q80 webp" -}}
+            <div class="album-thumb">
+              <img src="{{ $thumb.RelPermalink }}"
+                   width="{{ $thumb.Width }}" height="{{ $thumb.Height }}"
+                   alt="" loading="lazy" decoding="async">
+            </div>
+          {{- else }}
+            <div class="album-thumb album-thumb-empty" aria-hidden="true">📷</div>
+          {{- end }}
+          <div class="album-meta">
+            <h2 class="album-title">{{ .Title }}</h2>
+            <time datetime="{{ .Date.Format "2006-01-02" }}" class="album-date">
+              {{ .Date.Format "January 2, 2006" }}
+            </time>
+            {{- with .Description }}<p class="album-description">{{ . }}</p>{{ end -}}
+            <p class="album-count">
+              {{- $count := len (.Resources.ByType "image") -}}
+              {{ $count }} photo{{ if ne $count 1 }}s{{ end }}
+            </p>
+          </div>
+        </a>
+      </li>
+      {{- end }}
+    </ul>
+    {{- end }}
+  </div>
+</section>
+{{ end }}

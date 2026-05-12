@@ -1,0 +1,27 @@
+{{- /*
+  Figure with responsive image + optional caption.
+
+  Use in markdown:
+    {{< figure-image src="images/farm-pavilion.jpg"
+                     alt="The Farm — gazebo, pond, and picnic pavilion"
+                     caption="Picnic pavilion and gazebo overlooking the pond." >}}
+
+  Args:
+    src       (required) — relative to assets/
+    alt       (required)
+    caption   (optional)
+    class     (optional)
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" -}}
+{{- $caption := .Get "caption" -}}
+{{- $class := .Get "class" | default "figure-image" -}}
+<figure class="{{ $class }}">
+  {{ partial "responsive-image.html" (dict
+    "src" $src
+    "alt" $alt
+    "sizes" "(min-width: 720px) 720px, 100vw"
+    "loading" "lazy"
+  ) }}
+  {{- with $caption }}<figcaption>{{ . | markdownify }}</figcaption>{{ end -}}
+</figure>

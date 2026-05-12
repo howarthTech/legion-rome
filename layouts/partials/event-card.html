@@ -1,0 +1,28 @@
+{{- /*
+  Event card — reused on the homepage and the /events/ index.
+  Argument: a Page (an /events/<slug>/ content page).
+  The whole card is clickable (stretched-link pattern); the in-card buttons
+  remain functional via z-index.
+*/ -}}
+{{- $p := . -}}
+{{- $date := $p.Date -}}
+{{- $time := $date.Format "3:04 PM" -}}
+{{- $isPast := lt $date now -}}
+<article class="event-card{{ if $isPast }} event-card-past{{ end }}">
+  <time datetime="{{ $date.Format "2006-01-02T15:04" }}" class="event-date">
+    <span class="event-month">{{ $date.Format "Jan" }}</span>
+    <span class="event-day">{{ $date.Format "2" }}</span>
+    <span class="event-year">{{ $date.Format "2006" }}</span>
+  </time>
+  <div class="event-body">
+    <h3 class="event-title">
+      <a href="{{ $p.RelPermalink }}" class="event-link-stretched">{{ $p.Title }}</a>
+    </h3>
+    <p class="event-meta">{{ $time }} · {{ $p.Params.location }}</p>
+    {{- with $p.Params.description }}<p class="event-description">{{ . }}</p>{{ end -}}
+    {{- with $p.Params.contact }}<p class="event-contact"><strong>Contact:</strong> {{ . }}</p>{{ end -}}
+    {{- if not $isPast }}
+    {{- partial "event-actions.html" $p -}}
+    {{- end }}
+  </div>
+</article>

@@ -1,0 +1,9 @@
+{{- /* TODO banner — visible in dev/staging so we don't miss outstanding content gaps.
+       Use: {{< todo >}} body of the TODO, in markdown {{< /todo >}}
+       Hidden in production builds (`hugo --environment production`). */ -}}
+{{- if not (eq hugo.Environment "production") -}}
+<aside class="todo-banner" role="note">
+  <strong>TODO — content needed:</strong>
+  <div>{{ .Inner | .Page.RenderString }}</div>
+</aside>
+{{- end -}}
