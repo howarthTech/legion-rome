@@ -45,10 +45,28 @@ Content-side gaps and questions for the post officers live in
 - [ ] **Hall rental inquiry form** — separate form distinct from the general
       contact form, with date / capacity / event-type fields.
 
-## CRM / member management (major future feature)
+## CRM / member management (in flight — separate repo)
 
-A long-term ask: an admin-side member directory with SMS reminders for
-upcoming meetings and events. **Not built. Not part of the v1 launch.**
+Member directory + SMS event reminders for Post 5 officers. **Lives in a
+separate repo**, [howarthTech/legion-rome-crm](https://github.com/howarthTech/legion-rome-crm),
+because it's a separate VPS tenant (Go app + SQLite vs. this site's static
+HTML). Cross-link below for the open items there. v1 of the static site
+launches independently — the CRM is not gating that.
+
+### What's built in the CRM repo
+
+- Admin auth (single configured user, session cookie)
+- Member CRUD with E.164 phone normalization
+- TCPA-compliant opt-in flow (PENDING → OPTED_IN on YES / OPTED_OUT on STOP)
+- Twilio inbound webhook with HMAC signature verification
+- Full inbound/outbound audit log per member
+- Server-rendered admin UI
+
+### Still owed to the static site from the CRM project
+
+- [ ] Add a `/events.json` output format to the static site so the CRM can
+      read upcoming events without duplicating them. Hugo output-format config,
+      JSON layout per Hugo's docs.
 
 ### Requirements (as understood)
 
