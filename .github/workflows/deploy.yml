@@ -1,10 +1,11 @@
 name: Build & Deploy
 
 # Triggers:
-# - On every push to main (the canonical change-the-site path)
-# - Daily at 5:00 AM UTC = 1:00 AM Eastern, so past/upcoming event split
-#   stays accurate even when no one pushes for a while
-# - Manually from the Actions tab when needed
+# - Every push to main → build always runs (CI validation), deploy only if enabled
+# - Manual trigger from Actions tab
+# - Daily 5:00 AM UTC cron (1:00 AM Eastern) — keeps the past/upcoming event
+#   split current. Only useful once deploy is enabled; the build-only run
+#   exits cleanly when DEPLOY_ENABLED isn't set.
 on:
   push:
     branches: [main]
@@ -12,26 +13,31 @@ on:
     - cron: "0 5 * * *"
   workflow_dispatch: {}
 
-# Prevent overlapping deploys — if a new push comes in while we're building,
-# cancel the older one
+# Don't pile up parallel deploys for the same branch.
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-deploy:
+  # ---------- BUILD ----------
+  # Always runs. Validates that the site builds with the same Hugo version,
+  # flags, and content as production. Output is uploaded as an artifact for
+  # the deploy job to consume.
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 6
 
     env:
       HUGO_VERSION: "0.140.0"
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          # Hugo needs lastmod git info disabled (we set enableGitInfo=false)
-          # but a shallow clone is still fine
           fetch-depth: 1
 
       - name: Install Hugo (extended)
@@ -44,23 +50,51 @@ jobs:
 
       - name: Build site
         run: |
-          # Production build — TODO banners disappear, output goes in ./public
+          # Production build — TODO banners hidden, output goes in ./public
           hugo \
             --environment production \
             --minify \
             --gc \
             --cleanDestinationDir
-          echo "Built $(find public -type f | wc -l) files."
+          echo "✓ Built $(find public -type f | wc -l) files."
 
       - name: Copy PHP form endpoints into publish dir
         run: |
           # Hugo doesn't know about the forms/ tree (PHP isn't a Hugo concept).
-          # Copy them into the publish dir at /_form/ so rsync ships them too.
+          # Bundle them into public/_form/ so the deploy job rsyncs them too.
           mkdir -p public/_form
           cp forms/*.php public/_form/
-          # _shared.php is included by the others; not directly hit by the
-          # web, but php_fastcgi will require()? it from disk.
           chmod 0644 public/_form/*.php
+
+      - name: Upload built site as artifact
+        # Even when deploy is disabled, having the artifact downloadable from
+        # the Actions UI is useful — you can grab a production build without
+        # running Hugo locally.
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: public/
+          retention-days: 7
+
+  # ---------- DEPLOY ----------
+  # Only runs when the repo variable DEPLOY_ENABLED is set to "true".
+  # Flip it on once OPS has provisioned the deploy SSH key + DNS:
+  #   gh variable set DEPLOY_ENABLED --body "true" -R howarthTech/legion-rome
+  # Required secrets at that point:
+  #   DEPLOY_SSH_KEY, DEPLOY_KNOWN_HOSTS, DEPLOY_HOST, DEPLOY_USER, DEPLOY_PATH
+  deploy:
+    name: Deploy
+    needs: build
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Download built site
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: public/
 
       - name: Install rsync + SSH client
         run: |
@@ -81,16 +115,13 @@ jobs:
 
       - name: Deploy via rsync
         env:
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}        # e.g. osh-vps-deploy
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}        # e.g. claude
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}        # e.g. /srv/www/romelegion.org/
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           # --delete-after: remove files on the server that no longer exist in
           # the build, but only after a successful transfer (so a broken build
           # doesn't wipe the live site).
-          # -a: archive (preserve mode, mtime, etc.)
-          # -z: compress in transit
-          # --human-readable + --stats: nicer logs
           rsync \
             -az \
             --delete-after \
@@ -101,8 +132,6 @@ jobs:
             "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 
       - name: Verify deploy
-        env:
-          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
           # Smoke test the live site — homepage should 200 and contain our title
           set -e

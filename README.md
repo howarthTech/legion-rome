@@ -205,20 +205,52 @@ visitors, but reviewers and editors can still see them.
 
 ## Deploy
 
-Pushing to `main` deploys automatically via `.github/workflows/deploy.yml`.
-Required GitHub secrets:
+The workflow `.github/workflows/deploy.yml` has two jobs:
 
-| Secret                 | What it is                                            |
-| ---                    | ---                                                   |
-| `DEPLOY_SSH_KEY`       | Private key for the deploy user on the VPS           |
-| `DEPLOY_KNOWN_HOSTS`   | `ssh-keyscan -p 2222 <vps-hostname>` output           |
-| `DEPLOY_HOST`          | VPS hostname (e.g. `osh-vps-deploy`)                 |
-| `DEPLOY_USER`          | The deploy user (e.g. `claude`)                       |
-| `DEPLOY_PATH`          | Where to rsync the build (`/srv/www/romelegion.org/`) |
+1. **build** — always runs on every push to `main`. Builds with Hugo, bundles
+   the PHP endpoints, uploads the result as a workflow artifact. Catches any
+   regression that would break the production build before it hits the VPS.
+2. **deploy** — runs only when the repo variable `DEPLOY_ENABLED` is set to
+   `"true"`. rsyncs the build artifact to the VPS.
 
-OPS provisions the SSH key and deploy path; we set them as repo secrets.
+### Why deploys are off right now
 
-Manual deploy: open the **Actions** tab → "Build & Deploy" → "Run workflow."
+OPS hasn't provisioned the deploy SSH key yet, and the new site isn't ready to
+go live anyway. Every push to `main` runs **build** and stops there — you get
+a green check confirming the site still compiles.
+
+### Enabling deploys
+
+When OPS provisions credentials, set five repo secrets and flip the variable:
+
+```bash
+gh secret set DEPLOY_SSH_KEY     -R howarthTech/legion-rome < ~/.ssh/deploy_key
+gh secret set DEPLOY_KNOWN_HOSTS -R howarthTech/legion-rome   # paste known_hosts
+gh secret set DEPLOY_HOST        -R howarthTech/legion-rome --body "osh-vps-deploy"
+gh secret set DEPLOY_USER        -R howarthTech/legion-rome --body "claude"
+gh secret set DEPLOY_PATH        -R howarthTech/legion-rome --body "/srv/www/romelegion.org/"
+
+# Flip the toggle
+gh variable set DEPLOY_ENABLED   -R howarthTech/legion-rome --body "true"
+```
+
+The next push to `main` will build **and** deploy.
+
+| Secret | What it is |
+| --- | --- |
+| `DEPLOY_SSH_KEY` | Private key for the deploy user on the VPS |
+| `DEPLOY_KNOWN_HOSTS` | `ssh-keyscan -p 2222 <vps-host>` output |
+| `DEPLOY_HOST` | SSH host alias (e.g. `osh-vps-deploy`) |
+| `DEPLOY_USER` | Deploy user (e.g. `claude`) |
+| `DEPLOY_PATH` | rsync destination (`/srv/www/romelegion.org/`) |
+
+Manual run: **Actions** tab → "Build & Deploy" → "Run workflow."
+
+### Grabbing the production build without deploying
+
+Even with deploy disabled, every successful build uploads `public/` as a
+workflow artifact you can download from the Actions UI. Useful for previewing
+the production build (TODO banners hidden) without setting anything up.
 
 ---
 
