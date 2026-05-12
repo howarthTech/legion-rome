@@ -5,7 +5,7 @@
       <p class="footer-lede">American Legion Post 5 · Chartered {{ site.Params.charterYear }} · Rome, Georgia</p>
       <address class="footer-address">
         <strong>Meets:</strong> {{ site.Params.meetingSchedule }}<br>
-        <strong>Location:</strong> {{ site.Params.meetingLocation }}<br>
+        <strong>Location:</strong> {{ partial "maps-link.html" (dict "address" site.Params.meetingLocation) }}<br>
         <strong>Mail:</strong> {{ site.Params.mailingAddress }}<br>
         <strong>Phone:</strong> <a href="tel:{{ replaceRE "[^0-9]" "" site.Params.postPhone }}">{{ site.Params.postPhone }}</a><br>
         <strong>Email:</strong> <a href="mailto:{{ site.Params.postEmail }}">{{ site.Params.postEmail }}</a>

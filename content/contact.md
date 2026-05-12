@@ -16,8 +16,7 @@ upcoming events, or anything else.
 
 The post meets the **2nd Monday of every month at 6:00 PM** at The Farm:
 
-> 493 Jones Bend Rd NE
-> Rome, GA 30165
+> {{< maps-link "493 Jones Bend Rd NE, Rome, GA 30165" >}}
 
 Guests and prospective members are welcome.
 

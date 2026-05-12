@@ -22,10 +22,8 @@
         </dd>
         <dt>Location</dt>
         <dd>
-          {{ .Params.location }}
-          {{- with .Params.location }}
-            <br><a href="https://www.google.com/maps/search/?api=1&query={{ . | urlquery }}" target="_blank" rel="noopener noreferrer" class="event-map-link">View on Google Maps →</a>
-          {{ end -}}
+          {{ partial "maps-link.html" (dict "address" .Params.location) }}
+          <br><span class="muted" style="font-size: 0.875rem;">Click the address to open in Google Maps.</span>
         </dd>
         {{- with .Params.contact }}
         <dt>Contact</dt>

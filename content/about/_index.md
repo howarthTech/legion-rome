@@ -13,17 +13,14 @@ veterans service organization.
 The post meets the **2nd Monday of each month at 6:00 PM** at our facility:
 
 > **The Farm (Walker Farm)**
-> 493 Jones Bend Rd NE
-> Rome, GA 30165
+> {{< maps-link "493 Jones Bend Rd NE, Rome, GA 30165" >}}
 
 {{< figure-image
     src="images/farm-grounds.jpg"
     alt="The grounds at The Farm: open green field, a white gazebo on the left, pond in the middle, tree line beyond"
     caption="The grounds at The Farm, our regular meeting location." >}}
 
-The Auxiliary meets at **Brookdale Senior Living**, 180 Woodrow Wilson Way,
-Rome, GA 30165 — also on the 2nd Monday at 6:00 PM. Sons of the American Legion
-meet separately; see our [Events](/events/) page.
+The Auxiliary meets at **Brookdale Senior Living**, {{< maps-link "180 Woodrow Wilson Way, Rome, GA 30165" >}} — also on the 2nd Monday at 6:00 PM. Sons of the American Legion meet separately; see our [Events](/events/) page.
 
 ## Post Officers
 

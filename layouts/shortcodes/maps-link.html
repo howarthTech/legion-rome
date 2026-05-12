@@ -1,0 +1,15 @@
+{{- /*
+  Shortcode wrapper around layouts/partials/maps-link.html so markdown
+  files can wire an address up to Google Maps.
+
+  Usage in markdown:
+    {{< maps-link "493 Jones Bend Rd NE, Rome, GA 30165" >}}
+    {{< maps-link "493 Jones Bend Rd NE, Rome, GA 30165" "View the property →" >}}
+
+  Positional args:
+    1: address (required)
+    2: visible text (optional; defaults to the address)
+*/ -}}
+{{- $addr := .Get 0 -}}
+{{- $text := .Get 1 -}}
+{{- partial "maps-link.html" (dict "address" $addr "text" $text) -}}

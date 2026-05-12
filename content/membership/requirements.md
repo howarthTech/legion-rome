@@ -25,7 +25,7 @@ To complete your membership:
 2. **Proof of service** — a copy of your **DD214** (please black out your
    Social Security number for your own protection).
 3. **Annual dues** — **$55** per year, paid by check or money order to
-   "American Legion Post 5."
+   "American Legion Post 5." Mail to {{< maps-link "P.O. Box 945, Rome, GA 30162" "P.O. Box 945, Rome, GA 30162" >}}.
 
 Upon approval, you'll receive your official American Legion membership card.
 

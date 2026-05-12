@@ -1,0 +1,33 @@
+{{- /*
+  Renders an address as a clickable Google Maps link.
+
+  Arg (dict):
+    address (required) — the address string used as the Maps query AND as the
+                         displayed text unless `text` is set.
+    text    (optional) — visible link text. Defaults to `address`.
+
+  Output: <a href="https://www.google.com/maps/search/?api=1&query=...">
+            <displayed text><visually-hidden " (opens Google Maps in a new tab)">
+          </a>
+
+  Used by:
+    - layouts/shortcodes/maps-link.html  (markdown content)
+    - layouts/partials/footer.html       (site-param meeting address)
+    - layouts/partials/event-card.html   (event locations)
+*/ -}}
+{{- $addr := .address -}}
+{{- $text := .text | default $addr -}}
+{{- /* Default: an address-text search URL */ -}}
+{{- $url := printf "https://www.google.com/maps/search/?api=1&query=%s" ($addr | urlquery) -}}
+{{- /* If the address matches a known shortlink in hugo.toml's
+       [params.mapShortlinks], use that instead — points at the verified
+       Google Maps pin rather than relying on parsed-text geocoding.
+
+       Note: Hugo lowercases TOML map keys, so we lowercase the address too
+       for the substring check. Authors write keys like "Jones Bend" in the
+       config; Hugo serves them back as "jones bend". */ -}}
+{{- $addrLower := lower $addr -}}
+{{- range $needle, $shortlink := site.Params.mapShortlinks -}}
+  {{- if in $addrLower (lower $needle) -}}{{- $url = $shortlink -}}{{- end -}}
+{{- end -}}
+<a href="{{ $url }}" target="_blank" rel="noopener noreferrer" class="link-external">{{ $text }}<span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>

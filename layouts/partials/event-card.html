@@ -18,7 +18,7 @@
     <h3 class="event-title">
       <a href="{{ $p.RelPermalink }}" class="event-link-stretched">{{ $p.Title }}</a>
     </h3>
-    <p class="event-meta">{{ $time }} · {{ $p.Params.location }}</p>
+    <p class="event-meta">{{ $time }} · {{ partial "maps-link.html" (dict "address" $p.Params.location) }}</p>
     {{- with $p.Params.description }}<p class="event-description">{{ . }}</p>{{ end -}}
     {{- with $p.Params.contact }}<p class="event-contact"><strong>Contact:</strong> {{ . }}</p>{{ end -}}
     {{- if not $isPast }}

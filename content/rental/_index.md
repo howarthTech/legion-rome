@@ -29,7 +29,7 @@ programs.
 
 ## At a Glance
 
-- **Address:** 493 Jones Bend Rd NE, Rome, GA 30165
+- **Address:** {{< maps-link "493 Jones Bend Rd NE, Rome, GA 30165" >}}
 - **Capacity:** *TBD*
 - **Amenities:** *TBD — kitchen, tables, chairs, parking, etc.*
 - **Pricing:** *TBD — see contact below for current rates*

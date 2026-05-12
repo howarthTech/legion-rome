@@ -58,6 +58,18 @@ publishDir = "public"
   # TODO: replace with Post 5's actual Facebook page once we confirm the URL
   facebookURL = "https://www.facebook.com/the.american.legion"
 
+# Verified Google Maps shortlinks for known locations. Any address rendered
+# via the maps-link partial that contains one of these substrings (case-
+# sensitive) uses the corresponding shortlink instead of a generated search
+# URL — the shortlink hits the exact pin we've verified rather than relying
+# on Google to parse the address text.
+#
+# Add another entry to wire up a new location:
+#   [params.mapShortlinks]
+#   "Brookdale Senior Living" = "https://maps.app.goo.gl/..."
+[params.mapShortlinks]
+"Jones Bend" = "https://maps.app.goo.gl/ERBHABpCBCqsWuL59"
+
 # Output formats
 [outputs]
   home = ["HTML", "RSS"]

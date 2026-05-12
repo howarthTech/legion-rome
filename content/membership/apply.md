@@ -26,8 +26,7 @@ launch, we may keep this as a "download the PDF and mail it in" page instead
 Mail dues and DD214 separately to:
 
 > American Legion Post 5
-> P.O. Box 945
-> Rome, GA 30162
+> {{< maps-link "P.O. Box 945, Rome, GA 30162" >}}
 
 ## Application
 
