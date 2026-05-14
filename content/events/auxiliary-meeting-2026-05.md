@@ -3,7 +3,8 @@ title: "Auxiliary Unit 5 Monthly Meeting"
 date: 2026-05-11T18:00:00-04:00
 endDate: 2026-05-11T20:00:00-04:00
 location: "Brookdale Senior Living — 180 Woodrow Wilson Way, Rome, GA 30165"
-contact: "Louise Burgess · (706) 266-9816"
+contactName: "Louise Burgess"
+contactPhone: "(706) 266-9816"
 description: "Monthly Auxiliary Unit 5 meeting at Brookdale."
 ---
 

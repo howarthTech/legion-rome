@@ -1,11 +1,13 @@
-{{- /* Renders the Auxiliary / SAL contacts from data/officers.yaml */ -}}
+{{- /* Renders the Auxiliary / SAL contacts from data/officers.yaml.
+       Phone numbers use the phone-reveal pattern to keep them out of the
+       raw HTML. */ -}}
 <ul class="roster">
   {{- range sort site.Data.officers.family_contacts "weight" }}
   <li>
     <div class="roster-role">{{ .role }}</div>
     <div class="roster-detail">
       <strong>{{ .name }}</strong><br>
-      <a href="tel:{{ replaceRE "[^0-9]" "" .phone }}">{{ .phone }}</a>
+      {{- partial "phone-reveal.html" (dict "phone" .phone "name" .name) -}}
     </div>
   </li>
   {{- end }}

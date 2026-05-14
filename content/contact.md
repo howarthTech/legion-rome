@@ -9,7 +9,7 @@ upcoming events, or anything else.
 ## By Email or Phone
 
 > **General email:** <a href="mailto:romepost5@gmail.com">romepost5@gmail.com</a>
-> **Post phone:** <a href="tel:9512048635">(951) 204-8635</a>
+> **Post phone:** {{< phone "(951) 204-8635" >}}
 > **Mail:** P.O. Box 945, Rome, GA 30162
 
 ## Visit a Meeting

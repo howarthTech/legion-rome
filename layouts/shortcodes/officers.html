@@ -1,12 +1,19 @@
-{{- /* Renders the post officer roster from data/officers.yaml */ -}}
+{{- /* Renders the post officer roster from data/officers.yaml. Phone numbers
+       use the phone-reveal partial so the raw number isn't in the HTML
+       source for spam scrapers.
+
+       Note: in a Hugo shortcode template, `$` refers to the shortcode context
+       (not the outer range scope). So we capture the officer's name in a
+       local var before the with-block, then pass it to the phone partial. */ -}}
 <ul class="roster">
   {{- range sort site.Data.officers.officers "weight" }}
+  {{- $officerName := .name -}}
   <li>
     <div class="roster-role">{{ .role }}</div>
     <div class="roster-detail">
       <strong>{{ .name }}</strong><br>
-      {{ with .phone }}<a href="tel:{{ replaceRE "[^0-9]" "" . }}">{{ . }}</a>{{ end }}
-      {{ with .email }}{{ if . }} · <a href="mailto:{{ . }}">{{ . }}</a>{{ end }}{{ end }}
+      {{- with .phone }}{{ partial "phone-reveal.html" (dict "phone" . "name" $officerName) }}{{ end -}}
+      {{- with .email }}{{ if . }} · <a href="mailto:{{ . }}">{{ . }}</a>{{ end }}{{ end -}}
     </div>
   </li>
   {{- end }}

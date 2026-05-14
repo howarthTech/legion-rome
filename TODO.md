@@ -1,165 +1,106 @@
-# TODO — developer-side cleanup
+# TODO
 
-Things to handle before launch but that don't need answers from the post.
-Content-side gaps and questions for the post officers live in
-[QUESTIONS-FOR-POST.md](./QUESTIONS-FOR-POST.md).
+Open dev-side items only, ordered from "can do right now without waiting on
+anyone" to "blocked on someone else." Content questions for the post officers
+live in [QUESTIONS-FOR-POST.md](./QUESTIONS-FOR-POST.md).
 
----
-
-## Site config / placeholders
-
-- [ ] **Replace placeholder Facebook URL** in [`hugo.toml`](./hugo.toml)
-      (`facebookURL`) — currently points to The American Legion's national
-      Facebook account. Update to Post 5's actual page once we confirm the URL.
-- [ ] **Confirm the phone number** in [`hugo.toml`](./hugo.toml) (`postPhone`).
-      The existing site has a one-digit conflict (951-204-8635 vs 951-201-8635)
-      and 951 is a California area code. Pending Albert's answer.
-
-## Workflow / deploy
-
-- [ ] **Enable deploys when OPS is ready** — set five repo secrets
-      (`DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS`, `DEPLOY_HOST`, `DEPLOY_USER`,
-      `DEPLOY_PATH`) and flip `gh variable set DEPLOY_ENABLED --body "true"`.
-      Recipe in [README.md](./README.md).
-- [ ] **DNS** — confirm who manages `romelegion.org` nameservers and prepare
-      to add an A record pointing at the droplet IP (`165.227.26.223` per the
-      runbook).
-- [ ] **Add `DEPLOY_ENABLED` is off documentation** to the repo About text
-      (currently only in README).
-
-## Future content + features (not blocking launch)
-
-- [ ] **Combined ICS feed** so members can subscribe to "all Post 5 events" in
-      one go (Apple Calendar / Google Calendar subscription URL).
-- [ ] **Pagination of Past Events** — list will outgrow a single page after a
-      year or so of additions. Cap at ~12 or paginate.
-- [ ] **Decap or Sveltia CMS** — if/when an officer wants to self-edit, scaffold
-      `/admin/` with the appropriate auth flow.
-- [ ] **Real photo gallery albums** — the placeholder "The Farm" album is OK
-      for launch; replace with real event albums when the post sends photos.
-- [ ] **Recurring events** — the monthly meeting is currently entered one event
-      at a time. Either auto-generate them or accept that someone re-enters
-      monthly.
-- [ ] **Donation / sponsor signup page** — link to a third-party processor
-      (Givebutter, Donorbox, Stripe Checkout). Cannot take card numbers directly.
-- [ ] **Hall rental inquiry form** — separate form distinct from the general
-      contact form, with date / capacity / event-type fields.
-
-## CRM / member management (in flight — separate repo)
-
-Member directory + SMS event reminders for Post 5 officers. **Lives in a
-separate repo**, [howarthTech/legion-rome-crm](https://github.com/howarthTech/legion-rome-crm),
-because it's a separate VPS tenant (Go app + SQLite vs. this site's static
-HTML). Cross-link below for the open items there. v1 of the static site
-launches independently — the CRM is not gating that.
-
-### What's built in the CRM repo
-
-- Admin auth (single configured user, session cookie)
-- Member CRUD with E.164 phone normalization
-- TCPA-compliant opt-in flow (PENDING → OPTED_IN on YES / OPTED_OUT on STOP)
-- Twilio inbound webhook with HMAC signature verification
-- Full inbound/outbound audit log per member
-- Server-rendered admin UI
-
-### Still owed to the static site from the CRM project
-
-- [ ] Add a `/events.json` output format to the static site so the CRM can
-      read upcoming events without duplicating them. Hugo output-format config,
-      JSON layout per Hugo's docs.
-
-### Requirements (as understood)
-
-- **Admin authentication** — only Post 5 officers (Commander, Adjutant, etc.)
-  should be able to manage the member list. Public site stays read-only.
-- **Member list** — names and phone numbers at minimum. Likely also email,
-  membership-renewal date, branch / era, role in the post family
-  (Legion / Auxiliary / SAL), and an opt-in/opt-out flag for SMS.
-- **SMS reminders** — admin can pick an event from the calendar and trigger a
-  blast text to the opted-in members. Probably:
-  - Scheduled automatic reminders (e.g. "tomorrow at 6 PM: Post 5 meeting")
-  - Manual blasts ("Tonight's meeting moved indoors due to weather")
-- **Bonus: import / export** of the member list (CSV) for backup and to seed
-  initial data from whatever the post uses today (paper roster, Excel, etc.).
-
-### What this is NOT
-
-- Not a public-facing member portal (members signing themselves up online,
-  paying dues, etc.). That's a much bigger lift and the national myLegion
-  portal already covers it.
-- Not a marketing platform. SMS is for event reminders to opted-in members
-  only.
-
-### Considerations before building
-
-1. **TCPA compliance** (Telephone Consumer Protection Act). Sending SMS to
-   members in the US legally requires:
-   - **Express consent** in writing (or equivalent) before the first message.
-     Implementable as an "I agree to receive SMS reminders" checkbox on the
-     membership application form, plus a paper signup for existing members.
-   - **Opt-out instructions** in every message ("Reply STOP to unsubscribe").
-   - **No marketing content** — keep messages strictly informational.
-   - **No texts to numbers on the National Do Not Call Registry** without
-     verified consent.
-   Real penalties exist (up to $1,500 per violation). Not a feature to ship
-   carelessly.
-
-2. **Build vs buy.** Three realistic paths:
-   - **SaaS (recommended for first iteration):** services like SimpleTexting,
-     EZ Texting, SlickText, or Twilio Studio. ~$20–50/month for low volume,
-     fully managed compliance, member list lives in their app. Lowest dev
-     effort. Tradeoff: another vendor to babysit.
-   - **Twilio + small custom admin app:** flexible, cheaper at scale, but
-     requires us to build the admin UI, store the member list, handle
-     opt-outs, and own compliance. Probably overkill for ~100 members.
-   - **Hybrid:** members live in our DB, but SMS sending goes through a
-     SaaS via their API. Splits the difference.
-
-3. **Architecture impact.** Adding admin auth + a database + SMS sending
-   moves us off "pure static site." This becomes a sibling tenant on the VPS:
-   - New `/srv/apps/legion-rome-crm/` directory
-   - New compose file with an app container (Node/Python/PHP — TBD) + a
-     database
-   - New port allocation, resource budget row, backup drop-in
-   - Separate GitHub repo (cleaner than mixing app code into the site repo)
-   - Caddy block routes `admin.romelegion.org` (or `/admin/`) to the new app
-   The static site repo stays untouched. The CRM is its own deploy.
-
-4. **Auth.** For a 5-officer admin pool, GitHub OAuth or magic-link email
-   login is plenty. No need for a full password-and-MFA system.
-
-5. **Member list bootstrapping.** Whatever the post uses today (paper, Excel,
-   the myLegion portal's export) needs to be a one-time import. Need to know
-   what they have.
-
-### Open questions to confirm with the post before scoping
-
-- [ ] Roughly how many members would receive SMS reminders? (~50? ~200?
-      Affects the SaaS-vs-custom decision.)
-- [ ] Who are the admin users? (Just Commander + Adjutant? All officers?)
-- [ ] Are members already SMS-opted-in somewhere, or would we collect consent
-      from scratch?
-- [ ] Is there an existing member roster we'd import (Excel, paper, myLegion
-      export)?
-- [ ] What's the budget appetite for a monthly SaaS subscription?
+Items get deleted from this file when they ship; they don't move to a "done"
+section.
 
 ---
 
-## Tech-debt / nice-to-haves
+## 🟢 Can do locally right now — no external dependency
 
-- [ ] **Swap the calendar emoji** (📅) on the "Add to Google Calendar" button
-      for an inline SVG icon, matching the Apple-logo SVG on its sibling
-      button. Currently mixed: SVG (Apple) + emoji (📅). Quick consistency fix.
-- [ ] **Live deprecation** — `actions/checkout@v5` etc. will continue working
-      with the Node 24 env var, but cleaner to migrate to actions that ship
-      Node 24 natively once they're available.
-- [ ] **Update the existing site's redirect map** — once we cut over, we'll
-      want 301 redirects from popular Legionsites URLs (`/site/contactus`,
-      `/site/eventscalendar`, etc.) to their new locations. Caddy `redir`
-      directives, added to the site block.
-- [ ] **Test the contact and application forms end-to-end** with a real
-      Resend API key before launch (`make dev-forms`).
-- [ ] **Lighthouse audit** before launch — aiming for ≥95 on Performance,
-      Accessibility, Best Practices, SEO.
-- [ ] **404 page polish** — current copy is minimal. Could add a Post 5 image
-      and warmer tone.
+### Medium effort (1–2 hours each)
+- [ ] **301 redirect map** from the old Legionsites URLs. Caddy `redir`
+      directives in
+      [`caddy/sites/romelegion.org.caddy`](./caddy/sites/romelegion.org.caddy).
+      Old URLs documented in [`site-inventory.md`](./site-inventory.md);
+      top candidates: `/site/contactus` → `/contact/`,
+      `/site/eventscalendar` → `/events/`, `/post-officers` → `/about/`,
+      `/site/application` → `/membership/apply/`,
+      `/site/photogallery` → `/gallery/`, `/post-information` → `/about/`,
+      `/post-history` → `/about/history/`. Doesn't take effect until
+      cutover but the file should be ready.
+- [ ] **Lighthouse audit + fixes.** Target ≥95 on Performance,
+      Accessibility, Best Practices, SEO. Run locally against
+      `make build` output served over a simple `python -m http.server`
+      or similar; fix whatever it flags.
+- [ ] **Combined ICS feed** — "subscribe to all Post 5 events" calendar
+      URL. New Hugo output format, similar to the per-event `.ics` we
+      already generate. Plus a "Subscribe to events" button on
+      [`/events/`](./content/events/_index.md).
+- [ ] **Pagination of past events.** The unbounded list is fine today but
+      will outgrow a single page in ~6–12 months. Cap at ~12 visible or
+      paginate via Hugo's `Paginate` method.
+
+### Larger features (half-day+)
+- [ ] **Decap or Sveltia CMS** — scaffold `/admin/` editor with the right
+      config for non-technical officers to self-edit without git/markdown
+      knowledge. Mostly a YAML config file + branch / collection definitions.
+- [ ] **Donation / sponsor page.** A `/support/` page with copy + an
+      outbound link to a third-party processor (Givebutter or Donorbox
+      are the post's cleanest options — no PCI compliance burden on us).
+- [ ] **Hall rental inquiry form** — separate form distinct from the
+      general contact form, with date / capacity / event-type fields.
+      New PHP endpoint at `/_form/rental.php` mirroring the existing
+      contact/application pattern.
+- [ ] **Recurring events.** Monthly meeting is currently one event file
+      per month entered by hand. Either auto-generate the next ~6 months
+      from a recurrence rule in a Hugo data file, or accept the manual
+      workflow and just document it.
+
+## 🟡 Requires signing up for an external account (we keep doing the work)
+
+- [ ] **Test the contact + application forms end-to-end** with a real
+      Resend API key (`make dev-forms`). Need to: create a Resend account,
+      add `romelegion.org` as a sending domain, paste the verifications
+      into DNS once OPS gives us nameserver access, generate an API key,
+      drop it in `dev/secrets/romelegion.org.env`, run `make dev-forms`,
+      submit each form, verify the email arrives. Today the forms are
+      dry-run tested only.
+
+## 🔴 Blocked on OPS (do last)
+
+- [ ] **DNS for `romelegion.org`.** Confirm who manages the nameservers
+      and point an A record at the droplet (`165.227.26.223` per the
+      [hosting-pattern runbook](./runbooks/hosting-pattern.md#caddy-site-blocks)).
+- [ ] **Enable deploys.** Five GH Actions secrets + a repo variable.
+      Recipe in [README.md](./README.md#enabling-deploys). Waits on OPS
+      provisioning the deploy SSH key and the DNS record above.
+- [ ] **Cutover.** Once DNS is live and deploys are enabled: trigger the
+      first real deploy, verify the live site, set up the 301 redirects
+      above, watch logs for a day or two.
+
+---
+
+## 🔵 CRM project (separate repo)
+
+[howarthTech/legion-rome-crm](https://github.com/howarthTech/legion-rome-crm)
+is its own sibling project; v1 of the static site launches independently
+of it. Cross-listing the open work so it's visible from one place.
+
+### Can do locally right now
+- [ ] **Event-reminder send flow.** Admin picks an event from the static
+      site's `/events/events.json` feed (now live), blast goes to all
+      `OPTED_IN` members. Needs a send screen, the send loop, and audit
+      logging.
+- [ ] **Quiet-hours guard.** Don't text between 9 PM and 9 AM local time.
+      Tiny check in the send flow.
+- [ ] **Production deploy artifacts.** Dockerfile, docker-compose.yml,
+      Caddy site block for `admin.romelegion.org`. Can be written without
+      OPS — they review, we deploy.
+
+### Requires a Twilio account
+- [ ] **Set up Twilio + buy a sending number.** ~$1/month for a US local
+      number, ~$0.0075/SMS outbound. At 10–50 members × 1–2 sends/month
+      that's roughly $1–5/mo total.
+
+### Open with the post
+- [ ] Are members already SMS-opted-in somewhere we can import consent
+      from, or do we collect from scratch on first contact?
+- [ ] Budget appetite for the Twilio bill (~$1–5/month).
+
+### Blocked on OPS (do last)
+- [ ] Deploy the CRM as a new VPS tenant. Pending OPS resource-budget
+      conversation for the new `/srv/apps/legion-rome-crm/` allocation.

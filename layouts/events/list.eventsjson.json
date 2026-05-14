@@ -1,0 +1,47 @@
+{{- /*
+  /events/events.json — public JSON feed of post events for the CRM
+  (legion-rome-crm) to consume. Lists every event, marks past vs upcoming.
+
+  Schema:
+    generated:   RFC3339 timestamp of when this build ran
+    siteName:    human-readable post name (e.g. "Shanklin Attaway Post 5")
+    events[]:
+      slug         — URL-friendly identifier (matches /events/<slug>/)
+      url          — canonical event URL
+      title        — display title
+      startsAt     — RFC3339 start datetime
+      endsAt       — RFC3339 end datetime (defaults to startsAt + 2h)
+      location     — venue string (free text)
+      description  — one-line summary
+      contactName  — name of the human contact (may be empty)
+      contactPhone — phone in the format displayed on the site (may be empty)
+      isPast       — boolean, computed at build time
+      icsURL       — direct URL to the per-event .ics download
+
+  Output formatters: Hugo's `jsonify` handles escaping/encoding.
+*/ -}}
+{{- $events := slice -}}
+{{- range .Pages.ByDate -}}
+  {{- $endTime := .Date.Add (time.ParseDuration "2h") -}}
+  {{- with .Params.endDate -}}{{- $endTime = time.AsTime . -}}{{- end -}}
+  {{- $icsURL := "" -}}
+  {{- with .OutputFormats.Get "eventcal" }}{{ $icsURL = .Permalink }}{{ end -}}
+  {{- $events = $events | append (dict
+      "slug"          .File.ContentBaseName
+      "url"           .Permalink
+      "title"         .Title
+      "startsAt"      (.Date.Format "2006-01-02T15:04:05-07:00")
+      "endsAt"        ($endTime.Format "2006-01-02T15:04:05-07:00")
+      "location"      (.Params.location | default "")
+      "description"   (.Params.description | default "")
+      "contactName"   (.Params.contactName | default "")
+      "contactPhone"  (.Params.contactPhone | default "")
+      "isPast"        (lt .Date now)
+      "icsURL"        $icsURL
+    ) -}}
+{{- end -}}
+{{- dict
+    "generated" (now.UTC.Format "2006-01-02T15:04:05Z")
+    "siteName"  site.Params.postName
+    "events"    $events
+| jsonify (dict "indent" "  ") -}}

@@ -20,7 +20,13 @@
     </h3>
     <p class="event-meta">{{ $time }} · {{ partial "maps-link.html" (dict "address" $p.Params.location) }}</p>
     {{- with $p.Params.description }}<p class="event-description">{{ . }}</p>{{ end -}}
-    {{- with $p.Params.contact }}<p class="event-contact"><strong>Contact:</strong> {{ . }}</p>{{ end -}}
+    {{- if or $p.Params.contactName $p.Params.contactPhone -}}
+    <p class="event-contact"><strong>Contact:</strong>
+      {{- with $p.Params.contactName }} {{ . }}{{ end -}}
+      {{- if and $p.Params.contactName $p.Params.contactPhone }} · {{ end -}}
+      {{- with $p.Params.contactPhone }}{{ partial "phone-reveal.html" (dict "phone" . "name" $p.Params.contactName) }}{{ end -}}
+    </p>
+    {{- end -}}
     {{- if not $isPast }}
     {{- partial "event-actions.html" $p -}}
     {{- end }}

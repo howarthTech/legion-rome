@@ -1,0 +1,15 @@
+{{- /*
+  Markdown shortcode for the phone-reveal pattern.
+
+  Usage:
+    {{< phone "(951) 204-8635" >}}
+    {{< phone "(951) 204-8635" "Albert Hollis" >}}
+
+  Args:
+    1: phone number (required)
+    2: name of the person (optional — improves the aria-label)
+*/ -}}
+{{- partial "phone-reveal.html" (dict
+    "phone" (.Get 0)
+    "name"  (.Get 1)
+) -}}

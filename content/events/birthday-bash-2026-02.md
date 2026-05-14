@@ -3,7 +3,8 @@ title: "American Legion Birthday Bash"
 date: 2026-02-19T17:00:00-05:00
 endDate: 2026-02-19T20:00:00-05:00
 location: "Landmark Family Restaurant, Rome, GA"
-contact: "Albert Hollis · (951) 204-8635"
+contactName: "Albert Hollis"
+contactPhone: "(951) 204-8635"
 description: "Celebrating the American Legion's birthday with members of Post 5, Unit 5, and Squadron 5."
 ---
 

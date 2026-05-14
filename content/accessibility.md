@@ -64,7 +64,7 @@ us.** Even one sentence (*"the contact form's submit button doesn't work
 with my screen reader"*) helps us fix it.
 
 - **Email:** <a href="mailto:romepost5@gmail.com">romepost5@gmail.com</a>
-- **Phone:** <a href="tel:9512048635">(951) 204-8635</a>
+- **Phone:** {{< phone "(951) 204-8635" >}}
 - **Mail:** {{< maps-link "P.O. Box 945, Rome, GA 30162" >}}
 
 Please include:

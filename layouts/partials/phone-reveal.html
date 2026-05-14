@@ -1,0 +1,34 @@
+{{- /*
+  Phone-reveal button. Shows a "Show phone number" button instead of putting
+  a raw phone in the HTML. JS decodes the base64-encoded number on click,
+  replaces the button with a tel: link, and remembers the decision in
+  localStorage so the page auto-reveals for returning visitors.
+
+  Why: scrapers / spam bots harvest visible phone numbers via regex. A
+  one-tap reveal removes the visible surface without genuinely inconveniencing
+  human users (one extra click on first visit only).
+
+  Args (dict):
+    phone (required) — the phone number to encode, e.g. "(951) 204-8635"
+    label (optional) — visible button label. Default "Show phone".
+    name  (optional) — name of the person whose phone this is, for the
+                       aria-label so screen-reader users know whose number
+                       they're about to reveal.
+
+  The button is keyboard-accessible (it's a real <button>), has an
+  aria-label describing what the click will do, and the revealed <a href="tel:">
+  is a normal phone link the same as any other.
+*/ -}}
+{{- $phone := .phone -}}
+{{- $label := .label | default "Show phone" -}}
+{{- $name  := .name  | default "" -}}
+{{- $b64   := $phone | base64Encode -}}
+{{- $aria  := printf "Reveal phone number%s. Helps reduce spam-bot scraping. Click to show." (cond (ne $name "") (printf " for %s" $name) "") -}}
+<button class="phone-reveal" type="button"
+        data-p64="{{ $b64 }}"
+        aria-label="{{ $aria }}">
+  <svg class="phone-reveal-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.28-.28.67-.36 1.02-.25 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+  </svg>
+  <span class="phone-reveal-label">{{ $label }}</span>
+</button>

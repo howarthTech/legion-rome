@@ -85,6 +85,15 @@ publishDir = "public"
     isPlainText = true
     notAlternative = false
 
+  # Public JSON feed of events for the CRM (legion-rome-crm) to consume.
+  # Activated only on the events section (see content/events/_index.md).
+  # URL: /events/events.json
+  [outputFormats.EventsJSON]
+    mediaType = "application/json"
+    baseName = "events"
+    isPlainText = true
+    notAlternative = false
+
 # Primary nav (rendered by layouts/partials/nav.html)
 [menu]
   [[menu.main]]

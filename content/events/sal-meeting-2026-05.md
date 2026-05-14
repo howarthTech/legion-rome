@@ -3,7 +3,8 @@ title: "Sons of the American Legion Meeting"
 date: 2026-05-17T14:00:00-04:00
 endDate: 2026-05-17T15:30:00-04:00
 location: "The Farm — 493 Jones Bend Rd NE, Rome, GA 30165"
-contact: "Ronnie Grist · (678) 232-3381"
+contactName: "Ronnie Grist"
+contactPhone: "(678) 232-3381"
 description: "Officer voting, membership renewal, and new-member sign-ups."
 ---
 

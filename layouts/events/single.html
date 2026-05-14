@@ -25,9 +25,13 @@
           {{ partial "maps-link.html" (dict "address" .Params.location) }}
           <br><span class="muted" style="font-size: 0.875rem;">Click the address to open in Google Maps.</span>
         </dd>
-        {{- with .Params.contact }}
+        {{- if or .Params.contactName .Params.contactPhone }}
         <dt>Contact</dt>
-        <dd>{{ . }}</dd>
+        <dd>
+          {{- with .Params.contactName }}{{ . }}{{ end -}}
+          {{- if and .Params.contactName .Params.contactPhone }} · {{ end -}}
+          {{- with .Params.contactPhone }}{{ partial "phone-reveal.html" (dict "phone" . "name" $.Params.contactName) }}{{ end -}}
+        </dd>
         {{- end }}
       </dl>
       {{- if not $isPast }}

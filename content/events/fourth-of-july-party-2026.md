@@ -3,7 +3,8 @@ title: "Fourth of July Party"
 date: 2026-07-04T12:00:00-04:00
 endDate: 2026-07-04T17:00:00-04:00
 location: "The Farm — 493 Jones Bend Rd NE, Rome, GA 30165"
-contact: "Albert Hollis · (951) 204-8635"
+contactName: "Albert Hollis"
+contactPhone: "(951) 204-8635"
 description: "Annual Independence Day celebration. Members and families welcome."
 ---
 

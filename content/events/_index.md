@@ -1,10 +1,11 @@
 ---
 title: "Events"
 description: "Upcoming meetings and past gatherings at Post 5."
-# Section page itself only outputs HTML + RSS (matches site default).
+# Section gets HTML + RSS + a JSON feed (consumed by legion-rome-crm).
 outputs:
   - HTML
   - RSS
+  - EventsJSON
 cascade:
   # Every event page beneath this section also gets a .ics download.
   outputs:
