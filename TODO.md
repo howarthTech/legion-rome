@@ -52,33 +52,32 @@ verified tenant-agnostic, WCAG 2.2 AA pass complete). Remaining:
 
 ### Step 1 follow-up 🟢 local
 
-- [ ] **Expose brand tokens** — surface `--navy` / `--red` / `--gold` / logo
-      as config-overridable so a client can theme within the Legion palette.
-      (Theme is extracted; this is the one remaining sub-item — color tokens
-      are still hardcoded in the theme CSS.)
 - [ ] **Distribute the theme as a Hugo Module or submodule** so instances can
       pin a version. Currently a local `themes/` dir, which is fine for Post 5
       but won't scale to many client repos.
 
-### Step 4 — Provisioning CLI 🟢 local (build in the platform repo)
+### Step 4 — Provisioning CLI ✅ shipped
 
-- [ ] **Scaffold `legion-post-platform`** repo for the provisioning tool +
-      per-client specs.
-- [ ] **Define the client spec schema** (YAML): org name, custom domain,
-      officers, contact, branding, social URLs, map shortlinks.
-- [ ] **Website provisioning** — spec → scaffolded content instance +
-      `hugo.toml` + `data/` + build + `caddy/sites/<domain>.caddy`.
-- [ ] **CRM provisioning** — spec → `/srv/secrets/crm-<client>.env` (admin
-      creds + session secret + Twilio placeholders) + loopback port allocation
-      + container/compose config + named volume + `admin.<domain>.caddy`.
-- [ ] **Residual-steps checklist output** — DNS to point, Twilio number to
-      buy, admin password to hand off.
+Built in [legion-post-platform](https://github.com/howarthTech/legion-post-platform):
+`provision -spec clients/<name>.yaml` generates site config + data + content
+skeleton, both Caddy blocks, the CRM env (generated secrets) + compose
+snippet, and a CHECKLIST.md. Remaining follow-ups:
 
-### Step 5 — Dogfood + onboard client #2 🟡 needs a real second post
+- [ ] **Template the generic shared pages** (flag etiquette, accessibility,
+      membership requirements/why-join/apply, family descriptions) so they're
+      generated too, not copy-pasted from the reference instance.
+- [ ] **Port-allocation tracking** — the tool takes `crmPort` per spec but
+      doesn't yet track which ports are used across clients.
+- [ ] **Deploy automation** — currently emits a manual checklist; could
+      automate the rsync/DNS/container-up steps against the VPS later.
 
-- [ ] **Re-provision Post 5 from a spec** through the CLI; confirm it
-      reproduces the live environment. (If it can rebuild client #1, it works.)
+### Step 5 — Dogfood + onboard client #2
+
+- [x] **Re-provision Post 5 from a spec** — `clients/post-5.yaml` reproduces
+      the environment; generated config builds a working site against the
+      shared theme (verified).
 - [ ] **Onboard a real second post** to validate the model end-to-end.
+      (Needs a real second post — external.)
 
 ### 🔴 Platform items blocked on OPS / external
 
@@ -97,12 +96,14 @@ These ship regardless of track and benefit every client.
 
 ### 🟢 Local
 
-- [ ] **Event-reminder send flow** — admin picks an event from the site's
-      `/events/events.json` feed (live), blast goes to all `OPTED_IN`
-      members. Send screen + send loop + audit logging.
-- [ ] **Quiet-hours guard** — no SMS 9 PM–9 AM local.
-- [ ] **Production deploy artifacts** — Dockerfile + compose + Caddy block,
-      written so the provisioning layer can template them per client.
+- [x] **Event-reminder send flow** — `/reminders` reads the site's
+      events.json, sends to all OPTED_IN members, audit-logged. ✅ shipped
+- [x] **Quiet-hours guard** — reminders only send 9 AM–9 PM in the post's
+      timezone (ORG_TIMEZONE). ✅ shipped
+- [ ] **Production deploy artifacts** — the provisioner already templates the
+      compose snippet + Caddy blocks; still need the **Dockerfile** + a GHCR
+      image build/publish so `ghcr.io/howarthtech/legion-rome-crm:latest`
+      (referenced by the generated compose) actually exists.
 
 ### 🟡 Needs Twilio
 
