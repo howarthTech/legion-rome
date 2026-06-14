@@ -100,10 +100,15 @@ These ship regardless of track and benefit every client.
       events.json, sends to all OPTED_IN members, audit-logged. ✅ shipped
 - [x] **Quiet-hours guard** — reminders only send 9 AM–9 PM in the post's
       timezone (ORG_TIMEZONE). ✅ shipped
-- [ ] **Production deploy artifacts** — the provisioner already templates the
-      compose snippet + Caddy blocks; still need the **Dockerfile** + a GHCR
-      image build/publish so `ghcr.io/howarthtech/legion-rome-crm:latest`
-      (referenced by the generated compose) actually exists.
+- [x] **Dockerfile + GHCR publish** — multi-stage image (~38 MB, non-root,
+      pure-Go static binary), `publish.yml` builds + pushes to
+      `ghcr.io/howarthtech/legion-rome-crm` on push to main. Verified runs as a
+      client instance locally. ✅ shipped
+- [ ] **Set the GHCR package Public** — one-time manual step (Packages →
+      legion-rome-crm → Package settings → Change visibility → Public), or give
+      the VPS a `read:packages` PAT. The image is published but defaults to
+      private; the VPS can't pull it until this is done. (Couldn't do from
+      here — the session's gh token lacks package scope.)
 
 ### 🟡 Needs Twilio
 
