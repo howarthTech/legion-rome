@@ -1,106 +1,163 @@
 # TODO
 
-Open dev-side items only, ordered from "can do right now without waiting on
-anyone" to "blocked on someone else." Content questions for the post officers
-live in [QUESTIONS-FOR-POST.md](./QUESTIONS-FOR-POST.md).
+Open dev-side work, ordered by what unblocks the next action. Two tracks run
+in parallel:
 
-Items get deleted from this file when they ship; they don't move to a "done"
-section.
+- **Track A — Post 5 launch** (client #1, single-tenant). Ships value to a
+  real post now; does *not* wait on platform tooling.
+- **Track B — Platform** (the SaaS refactor: theme extraction, WCAG 2.2,
+  provisioning). Productizes the Post 5 work.
+
+See [`plan.md`](./plan.md) for what the platform is and why. Content the post
+officers owe us lives in [`QUESTIONS-FOR-POST.md`](./QUESTIONS-FOR-POST.md).
+Items get deleted on ship — this file tracks only what's open.
 
 ---
 
-## 🟢 Can do locally right now — no external dependency
+## Track A — Post 5 launch (client #1)
 
-### Medium effort (1–2 hours each)
+### 🟢 Local, no external dependency
+
 - [ ] **301 redirect map** from the old Legionsites URLs. Caddy `redir`
       directives in
       [`caddy/sites/romelegion.org.caddy`](./caddy/sites/romelegion.org.caddy).
-      Old URLs documented in [`site-inventory.md`](./site-inventory.md);
-      top candidates: `/site/contactus` → `/contact/`,
-      `/site/eventscalendar` → `/events/`, `/post-officers` → `/about/`,
-      `/site/application` → `/membership/apply/`,
-      `/site/photogallery` → `/gallery/`, `/post-information` → `/about/`,
-      `/post-history` → `/about/history/`. Doesn't take effect until
-      cutover but the file should be ready.
-- [ ] **Lighthouse audit + fixes.** Target ≥95 on Performance,
-      Accessibility, Best Practices, SEO. Run locally against
-      `make build` output served over a simple `python -m http.server`
-      or similar; fix whatever it flags.
-- [ ] **Combined ICS feed** — "subscribe to all Post 5 events" calendar
-      URL. New Hugo output format, similar to the per-event `.ics` we
-      already generate. Plus a "Subscribe to events" button on
-      [`/events/`](./content/events/_index.md).
-- [ ] **Pagination of past events.** The unbounded list is fine today but
-      will outgrow a single page in ~6–12 months. Cap at ~12 visible or
-      paginate via Hugo's `Paginate` method.
+      Candidates in [`site-inventory.md`](./site-inventory.md):
+      `/site/contactus` → `/contact/`, `/site/eventscalendar` → `/events/`,
+      `/post-officers` → `/about/`, `/site/application` →
+      `/membership/apply/`, `/site/photogallery` → `/gallery/`,
+      `/post-information` → `/about/`, `/post-history` → `/about/history/`.
+- [ ] **Lighthouse audit + fixes.** Target ≥95 Performance / Accessibility /
+      Best Practices / SEO against `make build` output.
+- [ ] **Combined ICS feed** — "subscribe to all Post 5 events" calendar URL
+      + a Subscribe button on [`/events/`](./content/events/_index.md).
+- [ ] **Pagination of past events** — cap visible past events or paginate
+      before the list grows past ~30.
 
-### Larger features (half-day+)
-- [ ] **Decap or Sveltia CMS** — scaffold `/admin/` editor with the right
-      config for non-technical officers to self-edit without git/markdown
-      knowledge. Mostly a YAML config file + branch / collection definitions.
-- [ ] **Donation / sponsor page.** A `/support/` page with copy + an
-      outbound link to a third-party processor (Givebutter or Donorbox
-      are the post's cleanest options — no PCI compliance burden on us).
-- [ ] **Hall rental inquiry form** — separate form distinct from the
-      general contact form, with date / capacity / event-type fields.
-      New PHP endpoint at `/_form/rental.php` mirroring the existing
-      contact/application pattern.
-- [ ] **Recurring events.** Monthly meeting is currently one event file
-      per month entered by hand. Either auto-generate the next ~6 months
-      from a recurrence rule in a Hugo data file, or accept the manual
-      workflow and just document it.
+### 🟡 Needs an external account (we do the work)
 
-## 🟡 Requires signing up for an external account (we keep doing the work)
+- [ ] **End-to-end form test** with a real Resend key (`make dev-forms`):
+      create the Resend account, verify `romelegion.org` as sender (needs
+      DNS access from OPS), generate a key, drop in
+      `dev/secrets/romelegion.org.env`, submit both forms, confirm delivery.
 
-- [ ] **Test the contact + application forms end-to-end** with a real
-      Resend API key (`make dev-forms`). Need to: create a Resend account,
-      add `romelegion.org` as a sending domain, paste the verifications
-      into DNS once OPS gives us nameserver access, generate an API key,
-      drop it in `dev/secrets/romelegion.org.env`, run `make dev-forms`,
-      submit each form, verify the email arrives. Today the forms are
-      dry-run tested only.
+### 🔴 Blocked on OPS (do last)
 
-## 🔴 Blocked on OPS (do last)
-
-- [ ] **DNS for `romelegion.org`.** Confirm who manages the nameservers
-      and point an A record at the droplet (`165.227.26.223` per the
-      [hosting-pattern runbook](./runbooks/hosting-pattern.md#caddy-site-blocks)).
-- [ ] **Enable deploys.** Five GH Actions secrets + a repo variable.
-      Recipe in [README.md](./README.md#enabling-deploys). Waits on OPS
-      provisioning the deploy SSH key and the DNS record above.
-- [ ] **Cutover.** Once DNS is live and deploys are enabled: trigger the
-      first real deploy, verify the live site, set up the 301 redirects
-      above, watch logs for a day or two.
+- [ ] **DNS for `romelegion.org`** → A record to the droplet
+      (`165.227.26.223`).
+- [ ] **Enable deploys** — five GH Actions secrets + `DEPLOY_ENABLED=true`.
+      Recipe in [README.md](./README.md#enabling-deploys).
+- [ ] **Cutover** — first real deploy, verify live, activate redirects,
+      watch logs.
 
 ---
 
-## 🔵 CRM project (separate repo)
+## Track B — Platform (SaaS refactor)
 
-[howarthTech/legion-rome-crm](https://github.com/howarthTech/legion-rome-crm)
-is its own sibling project; v1 of the static site launches independently
-of it. Cross-listing the open work so it's visible from one place.
+Sequenced so Post 5's output never changes until each step is proven. See
+[`plan.md` §9](./plan.md) for the rationale.
 
-### Can do locally right now
-- [ ] **Event-reminder send flow.** Admin picks an event from the static
-      site's `/events/events.json` feed (now live), blast goes to all
-      `OPTED_IN` members. Needs a send screen, the send loop, and audit
-      logging.
-- [ ] **Quiet-hours guard.** Don't text between 9 PM and 9 AM local time.
-      Tiny check in the send flow.
-- [ ] **Production deploy artifacts.** Dockerfile, docker-compose.yml,
-      Caddy site block for `admin.romelegion.org`. Can be written without
-      OPS — they review, we deploy.
+### Step 1 — Extract the shared theme 🟢 local
 
-### Requires a Twilio account
-- [ ] **Set up Twilio + buy a sending number.** ~$1/month for a US local
-      number, ~$0.0075/SMS outbound. At 10–50 members × 1–2 sends/month
-      that's roughly $1–5/mo total.
+- [ ] **Create `legion-post-theme`.** Move `layouts/`, `assets/`, `static/`,
+      and the shortcodes out of the Post 5 repo into a standalone Hugo theme.
+- [ ] **Reduce Post-5 specifics to config/data.** Audit templates for any
+      hardcoded "Shanklin Attaway" / "Rome" / "Post 5" / phone / address and
+      route them through `site.Params` or `data/`.
+- [ ] **Make Post 5 a thin instance** that consumes the theme (Hugo Module or
+      submodule). **Acceptance: `make build` produces byte-identical output to
+      today** (or only trivial diffs we understand).
+- [ ] **Expose brand tokens** — surface `--navy` / `--red` / `--gold` / logo
+      as config-overridable so a client can theme within the Legion palette.
+
+### Step 2 — Confirm CRM is fully tenant-agnostic 🟢 local
+
+- [ ] **Grep the CRM for hardcoded org strings** ("Post 5", "Rome",
+      "romelegion", any phone/address). Move anything found to env/config.
+      Most is already env-driven (`ORG_NAME`, etc.) — this is a verification
+      pass.
+- [ ] **Confirm one image runs any client** — same binary, different
+      `*.env` + DB volume + route. Document the per-client env contract.
+
+### Step 3 — WCAG 2.2 AA pass (theme + CRM) 🟢 local
+
+Done once in the theme → inherited by every client. See
+[`plan.md` §5](./plan.md) for the full criteria table.
+
+- [ ] **2.4.11 Focus Not Obscured** — verify focused elements aren't hidden
+      under the sticky header at any scroll position; tune `scroll-padding-top`.
+- [ ] **2.5.8 Target Size ≥24×24** — audit every link/button (nav, event
+      actions, phone-reveal, footer links, gallery thumbnails, pagination).
+- [ ] **2.5.7 Dragging Movements** — confirm no drag-only interaction exists
+      (lightbox is click/keys); document the guarantee.
+- [ ] **3.2.6 Consistent Help** — formalize a consistent contact affordance
+      across all pages.
+- [ ] **3.3.7 Redundant Entry** — audit the application form so no datum is
+      requested twice; ensure autofill works throughout.
+- [ ] **3.3.8 Accessible Authentication** — CRM login keeps username+password
+      with paste / password-manager / autofill allowed; **no CAPTCHA or
+      cognitive-test gate**. Verify.
+- [ ] **Update `/accessibility/`** statement to claim WCAG 2.1 **+ 2.2** AA.
+- [ ] **Add an internal conformance checklist** run at each theme release.
+
+### Step 4 — Provisioning CLI 🟢 local (build in the platform repo)
+
+- [ ] **Scaffold `legion-post-platform`** repo for the provisioning tool +
+      per-client specs.
+- [ ] **Define the client spec schema** (YAML): org name, custom domain,
+      officers, contact, branding, social URLs, map shortlinks.
+- [ ] **Website provisioning** — spec → scaffolded content instance +
+      `hugo.toml` + `data/` + build + `caddy/sites/<domain>.caddy`.
+- [ ] **CRM provisioning** — spec → `/srv/secrets/crm-<client>.env` (admin
+      creds + session secret + Twilio placeholders) + loopback port allocation
+      + container/compose config + named volume + `admin.<domain>.caddy`.
+- [ ] **Residual-steps checklist output** — DNS to point, Twilio number to
+      buy, admin password to hand off.
+
+### Step 5 — Dogfood + onboard client #2 🟡 needs a real second post
+
+- [ ] **Re-provision Post 5 from a spec** through the CLI; confirm it
+      reproduces the live environment. (If it can rebuild client #1, it works.)
+- [ ] **Onboard a real second post** to validate the model end-to-end.
+
+### 🔴 Platform items blocked on OPS / external
+
+- [ ] **Per-client tenancy on the VPS** — confirm with OPS the directory +
+      port + resource-budget convention for many `/srv/www/<domain>/` sites
+      and `/srv/apps/crm-<client>/` containers.
+- [ ] **Twilio account structure** — set up subaccount-per-client (see
+      [`plan.md` §12](./plan.md)).
+
+---
+
+## 🔵 CRM feature work (separate repo)
+
+[howarthTech/legion-rome-crm](https://github.com/howarthTech/legion-rome-crm).
+These ship regardless of track and benefit every client.
+
+### 🟢 Local
+
+- [ ] **Event-reminder send flow** — admin picks an event from the site's
+      `/events/events.json` feed (live), blast goes to all `OPTED_IN`
+      members. Send screen + send loop + audit logging.
+- [ ] **Quiet-hours guard** — no SMS 9 PM–9 AM local.
+- [ ] **Production deploy artifacts** — Dockerfile + compose + Caddy block,
+      written so the provisioning layer can template them per client.
+
+### 🟡 Needs Twilio
+
+- [ ] **Twilio account + first sending number** — ~$1/mo/number,
+      ~$0.0075/SMS.
 
 ### Open with the post
-- [ ] Are members already SMS-opted-in somewhere we can import consent
-      from, or do we collect from scratch on first contact?
-- [ ] Budget appetite for the Twilio bill (~$1–5/month).
 
-### Blocked on OPS (do last)
-- [ ] Deploy the CRM as a new VPS tenant. Pending OPS resource-budget
-      conversation for the new `/srv/apps/legion-rome-crm/` allocation.
+- [ ] Are members already SMS-opted-in somewhere we can import consent from,
+      or collect from scratch?
+- [ ] Budget appetite for the Twilio bill (~$1–5/mo per post).
+
+---
+
+## ⚪ Decisions to make (not yet actionable)
+
+Tracked in [`plan.md` §12](./plan.md): pricing/billing, data portability/
+export, theme versioning across clients, per-client CI vs. central builds,
+operator support model. Surface these when a paying client #2 is real.
