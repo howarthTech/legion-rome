@@ -80,6 +80,7 @@
       href="{{ "/fonts/source-serif-4-variable.woff2" | relURL }}" crossorigin>
 
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{- partial "brand-tokens.html" . -}}
 <link rel="canonical" href="{{ .Permalink }}">
 {{- with .OutputFormats.Get "RSS" }}
 <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .RelPermalink }}">

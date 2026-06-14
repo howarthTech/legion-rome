@@ -1,0 +1,51 @@
+{{- /*
+  Per-client brand color overrides.
+
+  The theme's default palette (Legion navy/red/gold) lives in main.css :root.
+  A client can override any of these tokens by setting them under
+  [params.brand] in their hugo.toml — useful for a post that wants its own
+  accent within the Legion visual language.
+
+  Only emits a <style> block if at least one brand param is set, so a client
+  that doesn't customize (like Post 5) produces no extra markup at all.
+
+  Config → CSS custom property mapping:
+    [params.brand]
+      navy      = "#0a3161"   ->  --navy
+      navyDark  = "#061f3f"   ->  --navy-d
+      navyLight = "#1d4584"   ->  --navy-l
+      red       = "#b31942"   ->  --red
+      redDark   = "#8e1334"   ->  --red-d
+      gold      = "#c8a85a"   ->  --gold
+      goldDark  = "#9c7d3a"   ->  --gold-d
+      cream     = "#faf6ec"   ->  --cream
+*/ -}}
+{{- $brand := site.Params.brand -}}
+{{- if $brand -}}
+{{- $map := slice
+    (slice "navy" "--navy")
+    (slice "navyDark" "--navy-d")
+    (slice "navyLight" "--navy-l")
+    (slice "red" "--red")
+    (slice "redDark" "--red-d")
+    (slice "gold" "--gold")
+    (slice "goldDark" "--gold-d")
+    (slice "cream" "--cream")
+-}}
+{{- $decls := slice -}}
+{{- range $pair := $map -}}
+  {{- $val := index $brand (index $pair 0) -}}
+  {{- with $val -}}
+    {{- /* Accept only hex colors (#rgb / #rrggbb / #rrggbbaa) — guards against
+           CSS injection from a malformed config value. */ -}}
+    {{- if findRE `^#[0-9A-Fa-f]{3,8}$` . -}}
+      {{- $decls = $decls | append (printf "%s:%s" (index $pair 1) .) -}}
+    {{- else -}}
+      {{- warnf "brand-tokens: ignoring non-hex color %q for %s" . (index $pair 1) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- with $decls -}}
+<style>{{ printf ":root{%s}" (delimit . ";") | safeCSS }}</style>
+{{- end -}}
+{{- end -}}

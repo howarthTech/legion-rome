@@ -46,6 +46,25 @@ example.)
 | `[params.postal]` | `street`/`locality`/`region`/`postalCode` | schema.org PostalAddress |
 | `[params.venue]` | `name`/`street`/`locality`/`region`/`postalCode` | schema.org meeting Place |
 | `[params.mapShortlinks]` | `"Jones Bend" = "https://maps.app.goo.gl/…"` | verified map pins |
+| `[params.brand]` *(optional)* | `navy`/`red`/`gold`/… hex colors | per-client color overrides (see below) |
+
+### Brand colors (optional)
+
+The default palette is Legion navy/red/gold. A client can override any token
+under `[params.brand]` — values must be hex colors; non-hex values are ignored
+with a build warning. If no brand params are set, no extra markup is emitted.
+
+```toml
+[params.brand]
+  navy      = "#0a3161"   # --navy  (primary)
+  navyDark  = "#061f3f"   # --navy-d
+  navyLight = "#1d4584"   # --navy-l
+  red       = "#b31942"   # --red   (accent)
+  redDark   = "#8e1334"   # --red-d
+  gold      = "#c8a85a"   # --gold  (highlight)
+  goldDark  = "#9c7d3a"   # --gold-d
+  cream     = "#faf6ec"   # --cream
+```
 
 **TOML gotcha:** the `[params.*]` sub-tables must appear *after* every simple
 `key = value` under `[params]`. Once a sub-table header opens, all following
