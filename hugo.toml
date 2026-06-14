@@ -66,6 +66,8 @@ publishDir = "public"
   # --- Location / identity (used across the theme; was hardcoded pre-theme) ---
   heroTitle = "Shanklin Attaway Post 5 &mdash; Rome, Georgia"
   heroImageAlt = "Two Post 5 officers in dress uniform with 'ROME, GA' caps at a meeting, an American flag visible behind them"
+  heroBgImage = "images/farm-grounds.jpg"   # full-bleed hero background
+  heroImage = "images/hero-meeting.jpg"      # framed hero photo
   locality = "Rome"             # city
   region = "GA"                 # state abbr
   regionLong = "Georgia"        # state full

@@ -29,9 +29,12 @@
 
 {{- $orig := resources.Get $src -}}
 {{- if not $orig -}}
-  {{- errorf "responsive-image: source not found in assets/: %q" $src -}}
-{{- end -}}
-
+  {{- /* Degrade gracefully: a missing per-instance image (e.g. a freshly
+         provisioned site whose photos haven't been added yet) warns at build
+         time but does not crash the whole build. The hero/figure simply has no
+         image until the asset is supplied. */ -}}
+  {{- warnf "responsive-image: source not found in assets/: %q — skipping" $src -}}
+{{- else -}}
 {{- /* Cap widths at the original's actual width to avoid upscaling */ -}}
 {{- $maxW := $orig.Width -}}
 {{- $usableWidths := slice -}}
@@ -80,3 +83,4 @@
     fetchpriority="{{ $fp }}"
     decoding="async">
 </picture>
+{{- end -}}

@@ -1,8 +1,13 @@
 {{ define "main" }}
+{{- /* Hero images are per-instance assets, named via params so each client
+       supplies its own. Defaults follow the convention images/hero-bg.jpg
+       (full-bleed background) + images/hero.jpg (framed photo). */ -}}
+{{- $heroBg := site.Params.heroBgImage | default "images/hero-bg.jpg" -}}
+{{- $heroImg := site.Params.heroImage | default "images/hero.jpg" -}}
 <section class="hero hero-bg" role="banner">
   <div class="hero-bg-image" aria-hidden="true">
     {{ partial "responsive-image.html" (dict
-      "src" "images/farm-grounds.jpg"
+      "src" $heroBg
       "alt" ""
       "sizes" "100vw"
       "class" "hero-image"
@@ -25,7 +30,7 @@
     </div>
     <figure class="hero-figure">
       {{ partial "responsive-image.html" (dict
-        "src" "images/hero-meeting.jpg"
+        "src" $heroImg
         "alt" site.Params.heroImageAlt
         "sizes" "(min-width: 900px) 45vw, 100vw"
         "class" "hero-meeting-image"
