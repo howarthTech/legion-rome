@@ -2,6 +2,22 @@
 {{- if .IsHome -}}{{ $title = site.Title }}{{- else -}}{{ $title = printf "%s — %s" .Title site.Title }}{{- end }}
 {{- $description := .Description | default site.Params.description -}}
 {{- $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint -}}
+{{- /* Social-share image. Per-page front matter `image:` wins; otherwise the
+       site-wide ogImage param; otherwise the page's first page-resource image
+       (e.g. an event/gallery photo). Generated at 1200x630 for OG. */ -}}
+{{- $ogImage := "" -}}
+{{- $ogSrc := .Params.image | default site.Params.ogImage -}}
+{{- with $ogSrc }}
+  {{- with (resources.Get .) }}
+    {{- $ogImage = (.Fill "1200x630 q82 Smart").Permalink -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $ogImage -}}
+  {{- with (.Resources.ByType "image" | first 1) -}}
+    {{- $img := index . 0 -}}
+    {{- $ogImage = ($img.Fill "1200x630 q82 Smart").Permalink -}}
+  {{- end -}}
+{{- end -}}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{{ $title }}</title>
@@ -14,7 +30,15 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:site_name" content="{{ site.Title }}">
+{{- with $ogImage }}
+<meta property="og:image" content="{{ . }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ . }}">
+{{- else }}
 <meta name="twitter:card" content="summary">
+{{- end }}
 
 <!-- Schema.org Organization -->
 <script type="application/ld+json">

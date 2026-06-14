@@ -46,6 +46,9 @@ publishDir = "public"
 # Site-wide parameters — available to templates as .Site.Params.<key>
 [params]
   description = "Shanklin Attaway American Legion Post 5 — serving veterans, families, and the Rome, Georgia community since 1925."
+  # Default social-share image (Open Graph / Twitter). Path is relative to
+  # assets/. Per-page front matter `image:` overrides this.
+  ogImage = "images/hero-meeting.jpg"
   postName = "Shanklin Attaway Post 5"
   postShortName = "Post 5"
   charterYear = 1925
@@ -91,6 +94,16 @@ publishDir = "public"
   [outputFormats.EventsJSON]
     mediaType = "application/json"
     baseName = "events"
+    isPlainText = true
+    notAlternative = false
+
+  # Combined iCalendar feed of ALL events — one subscribable calendar.
+  # Activated on the events section. URL: /events/calendar.ics
+  # Members add this once and new events appear automatically (Apple/Google
+  # Calendar poll the URL on their own schedule).
+  [outputFormats.EventsICS]
+    mediaType = "text/calendar"
+    baseName = "calendar"
     isPlainText = true
     notAlternative = false
 

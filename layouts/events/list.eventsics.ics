@@ -1,0 +1,38 @@
+{{- /*
+  /events/calendar.ics — a single subscribable iCalendar feed of ALL post
+  events. Members add this URL once to Apple/Google Calendar and new events
+  appear automatically when the calendar app re-polls.
+
+  RFC 5545: CRLF line endings (we append \r), text fields escape \ ; , and
+  newlines. One VEVENT per event page in the section.
+*/ -}}
+{{- $stamp := now.UTC.Format "20060102T150405Z" -}}
+BEGIN:VCALENDAR{{ "\r" }}
+VERSION:2.0{{ "\r" }}
+PRODID:-//romelegion.org//Post 5 Events//EN{{ "\r" }}
+CALSCALE:GREGORIAN{{ "\r" }}
+METHOD:PUBLISH{{ "\r" }}
+X-WR-CALNAME:{{ site.Params.postName }} Events{{ "\r" }}
+X-WR-TIMEZONE:America/New_York{{ "\r" }}
+{{- range .Pages.ByDate }}
+{{- $title := .Title | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
+{{- $loc   := .Params.location | default "" | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
+{{- $desc  := .Params.description | default "" | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
+{{- $start := .Date.UTC.Format "20060102T150405Z" -}}
+{{- $endTime := .Date.Add (time.ParseDuration "2h") -}}
+{{- with .Params.endDate }}{{ $endTime = time.AsTime . }}{{ end -}}
+{{- $end := $endTime.UTC.Format "20060102T150405Z" -}}
+{{- $uid := printf "%s@romelegion.org" .File.ContentBaseName }}
+BEGIN:VEVENT{{ "\r" }}
+UID:{{ $uid }}{{ "\r" }}
+DTSTAMP:{{ $stamp }}{{ "\r" }}
+DTSTART:{{ $start }}{{ "\r" }}
+DTEND:{{ $end }}{{ "\r" }}
+SUMMARY:{{ $title }}{{ "\r" }}
+DESCRIPTION:{{ if $desc }}{{ $desc }}\nMore info: {{ .Permalink }}{{ else }}More info: {{ .Permalink }}{{ end }}{{ "\r" }}
+LOCATION:{{ $loc }}{{ "\r" }}
+URL:{{ .Permalink }}{{ "\r" }}
+STATUS:CONFIRMED{{ "\r" }}
+END:VEVENT{{ "\r" }}
+{{- end }}
+END:VCALENDAR{{ "\r" }}

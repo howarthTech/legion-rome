@@ -1,11 +1,34 @@
 {{ define "main" }}
 {{- $upcoming := where .Pages "Date" "ge" now -}}
 {{- $past     := where .Pages "Date" "lt" now -}}
+{{- /* Cap visible past events so the list doesn't grow unbounded over years.
+       Newest-first; the rest stay reachable via their individual URLs and the
+       calendar feed, just not all rendered on this page. */ -}}
+{{- $pastCap := 12 -}}
+{{- $pastShown := $past.ByDate.Reverse -}}
+{{- $pastHidden := 0 -}}
+{{- if gt (len $pastShown) $pastCap -}}
+  {{- $pastHidden = sub (len $pastShown) $pastCap -}}
+  {{- $pastShown = first $pastCap $pastShown -}}
+{{- end -}}
+{{- $icsFeed := "" -}}
+{{- with .OutputFormats.Get "eventsics" }}{{ $icsFeed = .RelPermalink }}{{ end -}}
 <section class="page">
   <div class="container">
     <header class="page-header">
       <h1>{{ .Title }}</h1>
       {{- with .Description }}<p class="page-lede">{{ . }}</p>{{ end -}}
+      {{- if $icsFeed }}
+      <p class="events-subscribe">
+        <a href="{{ $icsFeed }}" class="btn btn-subscribe">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zM7 12h5v5H7z"/>
+          </svg>
+          Subscribe to all events
+        </a>
+        <span class="events-subscribe-help">Add to Apple Calendar, Google Calendar, or Outlook — new events appear automatically.</span>
+      </p>
+      {{- end }}
     </header>
     <div class="prose">
       {{ .Content }}
@@ -34,10 +57,13 @@
         <span class="events-count">{{ len $past }}</span>
       </h2>
       <div class="event-grid">
-        {{- range $past.ByDate.Reverse }}
+        {{- range $pastShown }}
           {{- partial "event-card.html" . -}}
         {{- end }}
       </div>
+      {{- if gt $pastHidden 0 }}
+      <p class="events-more muted">Showing the {{ $pastCap }} most recent past events. {{ $pastHidden }} older {{ cond (eq $pastHidden 1) "event is" "events are" }} not listed here.</p>
+      {{- end }}
     </section>
     {{- end }}
 

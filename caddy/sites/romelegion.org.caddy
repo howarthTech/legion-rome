@@ -40,6 +40,39 @@ romelegion.org {
     @html path *.html /
     header @html Cache-Control "public, max-age=300, must-revalidate"
 
+    # ---- 301 redirects from the old Legionsites URLs ----
+    # Preserves inbound links from Facebook, flyers, search-engine indexes,
+    # and the old site's deep links after cutover. Old URL inventory in
+    # site-inventory.md. 301 (permanent) so search engines transfer ranking.
+    redir /home              / permanent
+    redir /post-information  /about/ permanent
+    redir /post-location     /about/ permanent
+    redir /post-officers     /about/ permanent
+    redir /post-history      /about/history/ permanent
+    redir /board-of-directors /about/ permanent
+    redir /committees        /about/ permanent
+    redir /post-updates      /events/ permanent
+    redir /special-events    /events/ permanent
+    redir /site/eventscalendar /events/ permanent
+    redir /site/contactus    /contact/ permanent
+    redir /newsletter        /about/ permanent
+    redir /rental-information /rental/ permanent
+    redir /site/resourcerentals /rental/ permanent
+    redir /membership-requirements /membership/requirements/ permanent
+    redir /why-join          /membership/why-join/ permanent
+    redir /benefits          /membership/why-join/ permanent
+    redir /site/application   /membership/apply/ permanent
+    redir /auxiliary         /family/auxiliary/ permanent
+    redir /auxiliary-bulletin /family/auxiliary/ permanent
+    redir /sons-of-legion    /family/sons/ permanent
+    redir /legion-riders     /family/riders/ permanent
+    redir /site/photogallery /gallery/ permanent
+    redir /oratorical        /membership/ permanent
+    redir /flag-etiquette    /flag-etiquette/ permanent
+    redir /national-headquarters https://www.legion.org/ permanent
+    redir /state-headquarters https://georgialegion.org/ permanent
+    redir /affiliated-websites / permanent
+
     # ---- Form endpoints: only allow POST to specific .php files ----
     # We intentionally do NOT enable .php execution anywhere except these
     # known endpoints; the static publish dir has no other PHP and shouldn't.

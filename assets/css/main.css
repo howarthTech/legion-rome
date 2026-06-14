@@ -656,6 +656,36 @@ address { font-style: normal; }
   text-align: center;
 }
 
+/* Subscribe-to-all-events button + helper text on the events index */
+.events-subscribe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-4);
+}
+.btn-subscribe {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--navy);
+  color: #fff;
+  border: 1px solid var(--navy);
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+.btn-subscribe:hover { background: var(--navy-d); color: #fff; }
+.btn-icon { width: 1.1em; height: 1.1em; flex-shrink: 0; }
+.events-subscribe-help { font-size: 0.875rem; color: var(--muted); }
+.events-more {
+  margin-top: var(--space-4);
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
 /* Per-event detail page */
 .page-event { padding-block: var(--space-6); }
 .page-event-past .event-header h1 { color: var(--muted); }
