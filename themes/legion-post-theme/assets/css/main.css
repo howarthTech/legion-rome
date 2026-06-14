@@ -73,8 +73,11 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* Section anchors land below the sticky header */
-  scroll-padding-top: 5rem;
+  /* WCAG 2.2 — 2.4.11 Focus Not Obscured (Minimum): the sticky header is up
+     to ~96px tall on desktop (64px seal + padding + 4px red border). This
+     padding ensures anchored *and keyboard-focused* elements scroll clear of
+     it rather than landing hidden underneath. Keep ≥ the tallest header. */
+  scroll-padding-top: 6.5rem;
 }
 body {
   margin: 0;
@@ -137,7 +140,7 @@ h1, h2, h3, h4 {
   line-height: 1.15;
   letter-spacing: -0.005em;
   margin: 0 0 var(--space-4);
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 6.5rem;   /* match scroll-padding-top — WCAG 2.4.11 */
   /* Source Serif 4 has tabular and lining-num variants we can opt into */
   font-variant-numeric: oldstyle-nums proportional-nums;
 }
@@ -1228,6 +1231,7 @@ address { font-style: normal; }
   align-items: center;
   gap: 0.4em;
   padding: 0.25rem 0.7rem;
+  min-height: 24px;   /* WCAG 2.2 — 2.5.8 Target Size (Minimum) */
   background: transparent;
   color: inherit;
   border: 1px solid currentColor;
@@ -1324,7 +1328,18 @@ address { font-style: normal; }
 .footer-address a { color: var(--gold); }
 .footer-links { list-style: none; padding: 0; margin: 0; }
 .footer-links li { margin-bottom: var(--space-2); }
-.footer-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9375rem; }
+/* WCAG 2.2 — 2.5.8 Target Size (Minimum): these list links are block-level
+   (not the inline-in-prose exception), so the tap target must be ≥24×24px.
+   inline-flex + min-height + vertical padding guarantees it. */
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding-block: 0.15rem;
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
 .footer-links a:hover { color: var(--gold); }
 .footer-bottom {
   margin-top: var(--space-6);

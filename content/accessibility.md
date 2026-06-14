@@ -12,7 +12,8 @@ site is getting in your way.
 ## Standards we follow
 
 We aim to meet the **[Web Content Accessibility Guidelines (WCAG)
-2.1 Level AA](https://www.w3.org/TR/WCAG21/)**, the international standard for
+2.1](https://www.w3.org/TR/WCAG21/) and
+[2.2](https://www.w3.org/TR/WCAG22/) Level AA**, the international standard for
 web accessibility. Specifically, the site is built and reviewed against:
 
 - **Perceivable** — text alternatives for non-decorative images, sufficient
@@ -21,8 +22,9 @@ web accessibility. Specifically, the site is built and reviewed against:
   and zoomed-in views.
 - **Operable** — every interactive element is reachable and usable with
   only a keyboard. A "skip to main content" link appears at the top of every
-  page for screen-reader and keyboard users. Touch targets meet the
-  44 × 44 pixel minimum.
+  page for screen-reader and keyboard users. Tap targets meet the WCAG 2.2
+  minimum size, and a keyboard-focused element is never hidden behind the
+  sticky page header.
 - **Understandable** — predictable navigation, clear form labels, plain
   language, and inline error messages when something goes wrong.
 - **Robust** — semantic HTML5 landmarks (`<header>`, `<nav>`, `<main>`,
@@ -79,6 +81,6 @@ We'll respond as quickly as we reasonably can.
 ## Conformance statement
 
 This statement was last reviewed and updated on **{{< current-month-year >}}**.
-Our target conformance level is **WCAG 2.1 Level AA**. We test in current
+Our target conformance level is **WCAG 2.1 + 2.2 Level AA**. We test in current
 versions of Chrome, Safari, Firefox, and Edge on Windows, macOS, iOS, and
 Android, using keyboard, mouse, and touch.
