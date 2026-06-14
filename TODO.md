@@ -18,20 +18,11 @@ Items get deleted on ship — this file tracks only what's open.
 
 ### 🟢 Local, no external dependency
 
-- [ ] **301 redirect map** from the old Legionsites URLs. Caddy `redir`
-      directives in
-      [`caddy/sites/romelegion.org.caddy`](./caddy/sites/romelegion.org.caddy).
-      Candidates in [`site-inventory.md`](./site-inventory.md):
-      `/site/contactus` → `/contact/`, `/site/eventscalendar` → `/events/`,
-      `/post-officers` → `/about/`, `/site/application` →
-      `/membership/apply/`, `/site/photogallery` → `/gallery/`,
-      `/post-information` → `/about/`, `/post-history` → `/about/history/`.
-- [ ] **Lighthouse audit + fixes.** Target ≥95 Performance / Accessibility /
-      Best Practices / SEO against `make build` output.
-- [ ] **Combined ICS feed** — "subscribe to all Post 5 events" calendar URL
-      + a Subscribe button on [`/events/`](./content/events/_index.md).
-- [ ] **Pagination of past events** — cap visible past events or paginate
-      before the list grows past ~30.
+- [ ] **Real Lighthouse run.** Structural audit is done (meta, canonical,
+      single-h1, OG image now present, minified+fingerprinted CSS, sized
+      images). Still want a real Chrome+Lighthouse run for the actual scores
+      and anything the static audit can't catch (e.g. runtime CLS, contrast
+      edge cases). Needs Chrome + the `lighthouse` CLI installed.
 
 ### 🟡 Needs an external account (we do the work)
 
@@ -56,48 +47,18 @@ Items get deleted on ship — this file tracks only what's open.
 Sequenced so Post 5's output never changes until each step is proven. See
 [`plan.md` §9](./plan.md) for the rationale.
 
-### Step 1 — Extract the shared theme 🟢 local
+**Steps 1–3 shipped** (theme extracted with byte-identical output, CRM
+verified tenant-agnostic, WCAG 2.2 AA pass complete). Remaining:
 
-- [ ] **Create `legion-post-theme`.** Move `layouts/`, `assets/`, `static/`,
-      and the shortcodes out of the Post 5 repo into a standalone Hugo theme.
-- [ ] **Reduce Post-5 specifics to config/data.** Audit templates for any
-      hardcoded "Shanklin Attaway" / "Rome" / "Post 5" / phone / address and
-      route them through `site.Params` or `data/`.
-- [ ] **Make Post 5 a thin instance** that consumes the theme (Hugo Module or
-      submodule). **Acceptance: `make build` produces byte-identical output to
-      today** (or only trivial diffs we understand).
+### Step 1 follow-up 🟢 local
+
 - [ ] **Expose brand tokens** — surface `--navy` / `--red` / `--gold` / logo
       as config-overridable so a client can theme within the Legion palette.
-
-### Step 2 — Confirm CRM is fully tenant-agnostic 🟢 local
-
-- [ ] **Grep the CRM for hardcoded org strings** ("Post 5", "Rome",
-      "romelegion", any phone/address). Move anything found to env/config.
-      Most is already env-driven (`ORG_NAME`, etc.) — this is a verification
-      pass.
-- [ ] **Confirm one image runs any client** — same binary, different
-      `*.env` + DB volume + route. Document the per-client env contract.
-
-### Step 3 — WCAG 2.2 AA pass (theme + CRM) 🟢 local
-
-Done once in the theme → inherited by every client. See
-[`plan.md` §5](./plan.md) for the full criteria table.
-
-- [ ] **2.4.11 Focus Not Obscured** — verify focused elements aren't hidden
-      under the sticky header at any scroll position; tune `scroll-padding-top`.
-- [ ] **2.5.8 Target Size ≥24×24** — audit every link/button (nav, event
-      actions, phone-reveal, footer links, gallery thumbnails, pagination).
-- [ ] **2.5.7 Dragging Movements** — confirm no drag-only interaction exists
-      (lightbox is click/keys); document the guarantee.
-- [ ] **3.2.6 Consistent Help** — formalize a consistent contact affordance
-      across all pages.
-- [ ] **3.3.7 Redundant Entry** — audit the application form so no datum is
-      requested twice; ensure autofill works throughout.
-- [ ] **3.3.8 Accessible Authentication** — CRM login keeps username+password
-      with paste / password-manager / autofill allowed; **no CAPTCHA or
-      cognitive-test gate**. Verify.
-- [ ] **Update `/accessibility/`** statement to claim WCAG 2.1 **+ 2.2** AA.
-- [ ] **Add an internal conformance checklist** run at each theme release.
+      (Theme is extracted; this is the one remaining sub-item — color tokens
+      are still hardcoded in the theme CSS.)
+- [ ] **Distribute the theme as a Hugo Module or submodule** so instances can
+      pin a version. Currently a local `themes/` dir, which is fine for Post 5
+      but won't scale to many client repos.
 
 ### Step 4 — Provisioning CLI 🟢 local (build in the platform repo)
 
