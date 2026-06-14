@@ -46,27 +46,27 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "{{ site.Params.postName }}",
-  "alternateName": "American Legion Post 5 Rome GA",
+  "alternateName": "{{ site.Params.schemaAltName }}",
   "url": "{{ site.BaseURL }}",
   "email": "{{ site.Params.postEmail }}",
   "foundingDate": "{{ site.Params.charterYear }}",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "P.O. Box 945",
-    "addressLocality": "Rome",
-    "addressRegion": "GA",
-    "postalCode": "30162",
+    "streetAddress": "{{ site.Params.postal.street }}",
+    "addressLocality": "{{ site.Params.postal.locality }}",
+    "addressRegion": "{{ site.Params.postal.region }}",
+    "postalCode": "{{ site.Params.postal.postalCode }}",
     "addressCountry": "US"
   },
   "location": {
     "@type": "Place",
-    "name": "The Farm (Walker Farm)",
+    "name": "{{ site.Params.venue.name }}",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "493 Jones Bend Rd NE",
-      "addressLocality": "Rome",
-      "addressRegion": "GA",
-      "postalCode": "30165",
+      "streetAddress": "{{ site.Params.venue.street }}",
+      "addressLocality": "{{ site.Params.venue.locality }}",
+      "addressRegion": "{{ site.Params.venue.region }}",
+      "postalCode": "{{ site.Params.venue.postalCode }}",
       "addressCountry": "US"
     }
   }

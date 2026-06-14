@@ -13,7 +13,7 @@
   <div class="container hero-content hero-grid">
     <div class="hero-text">
       <p class="hero-eyebrow">Veterans Serving Veterans · Since {{ site.Params.charterYear }}</p>
-      <h1 class="hero-title">Shanklin Attaway Post 5 &mdash; Rome, Georgia</h1>
+      <h1 class="hero-title">{{ site.Params.heroTitle | safeHTML }}</h1>
       <p class="hero-lede">
         We welcome veterans from every branch and every era. Through service, fellowship,
         and community support, we honor those who served and invest in the next generation.
@@ -26,7 +26,7 @@
     <figure class="hero-figure">
       {{ partial "responsive-image.html" (dict
         "src" "images/hero-meeting.jpg"
-        "alt" "Two Post 5 officers in dress uniform with 'ROME, GA' caps at a meeting, an American flag visible behind them"
+        "alt" site.Params.heroImageAlt
         "sizes" "(min-width: 900px) 45vw, 100vw"
         "class" "hero-meeting-image"
         "loading" "eager"
@@ -62,7 +62,7 @@
         <h2>Veterans Welcome</h2>
         <p>
           If you served at least one day of active duty during a qualifying period and
-          received an honorable discharge, you're eligible to join Post 5.
+          received an honorable discharge, you're eligible to join {{ site.Params.postShortName }}.
         </p>
         <a href="/membership/requirements/" class="cta-link">Check eligibility →</a>
       </article>
@@ -78,7 +78,7 @@
         <h2>Support Our Mission</h2>
         <p>
           Become a Booster or Sponsor. Every contribution funds scholarships, honor
-          guards, Memorial Day observances, and veteran outreach in Rome and Floyd County.
+          guards, Memorial Day observances, and veteran outreach in {{ site.Params.serviceArea }}.
         </p>
         <a href="/contact/" class="cta-link">Reach out →</a>
       </article>
@@ -90,8 +90,8 @@
   <div class="container">
     <h2 class="section-title">The Four Pillars</h2>
     <p class="section-lede">
-      Every American Legion post — including Post 5 — is built on four enduring pillars
-      that guide our work in Rome and across the country.
+      Every American Legion post — including {{ site.Params.postShortName }} — is built on four enduring pillars
+      that guide our work in {{ site.Params.locality }} and across the country.
     </p>
     <div class="pillar-grid">
       <div class="pillar">

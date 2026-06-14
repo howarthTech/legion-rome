@@ -1,6 +1,6 @@
 <header class="site-header" role="banner">
   <div class="container header-inner">
-    <a href="/" class="brand" aria-label="American Legion Post 5 — home">
+    <a href="/" class="brand" aria-label="American Legion {{ site.Params.postShortName }} — home">
       {{- /* The seal renders at 40px on mobile and 64px on desktop. A single
              128px WebP (~6KB) covers @2x on the largest display size; CSS
              handles the down-scale to whichever breakpoint is active. */ -}}
@@ -12,7 +12,7 @@
            decoding="async">
       <span class="brand-text">
         <span class="brand-line1">American Legion</span>
-        <span class="brand-line2">Post 5</span>
+        <span class="brand-line2">{{ site.Params.postShortName }}</span>
       </span>
     </a>
     <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false">

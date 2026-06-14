@@ -14,10 +14,11 @@
 {{- with .Params.endDate -}}{{- $endTime = time.AsTime . -}}{{- end -}}
 {{- $end := $endTime.UTC.Format "20060102T150405Z" -}}
 {{- $stamp := now.UTC.Format "20060102T150405Z" -}}
-{{- $uid := printf "%s@romelegion.org" .File.ContentBaseName -}}
+{{- $host := (urls.Parse site.BaseURL).Host -}}
+{{- $uid := printf "%s@%s" .File.ContentBaseName $host -}}
 BEGIN:VCALENDAR{{ "\r" }}
 VERSION:2.0{{ "\r" }}
-PRODID:-//romelegion.org//Post 5 Events//EN{{ "\r" }}
+PRODID:-//{{ $host }}//{{ site.Params.postShortName }} Events//EN{{ "\r" }}
 CALSCALE:GREGORIAN{{ "\r" }}
 METHOD:PUBLISH{{ "\r" }}
 BEGIN:VEVENT{{ "\r" }}

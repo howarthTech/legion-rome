@@ -1,0 +1,7 @@
+name = "Legion Post Theme"
+license = "MIT"
+description = "Shared Hugo theme for American Legion post websites. Renders a complete post site (about, membership, events, gallery, rental, contact) from per-instance config + data. Part of the Legion Post Platform."
+min_version = "0.128.0"
+
+[author]
+  name = "howarthTech"

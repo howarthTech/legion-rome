@@ -4,6 +4,7 @@
 baseURL = "https://romelegion.org/"
 languageCode = "en-us"
 title = "American Legion Post 5 — Rome, GA"
+theme = "legion-post-theme"
 enableRobotsTXT = true
 enableGitInfo = false
 
@@ -56,10 +57,41 @@ publishDir = "public"
   meetingLocation = "The Farm — 493 Jones Bend Rd NE, Rome, GA 30165"
   meetingSchedule = "2nd Monday of each month at 6:00 PM"
   postEmail = "romepost5@gmail.com"
+
   # TODO: phone conflict on existing site (951-204-8635 vs 951-201-8635); 951 area code is California — verify
   postPhone = "(951) 204-8635"
   # TODO: replace with Post 5's actual Facebook page once we confirm the URL
   facebookURL = "https://www.facebook.com/the.american.legion"
+
+  # --- Location / identity (used across the theme; was hardcoded pre-theme) ---
+  heroTitle = "Shanklin Attaway Post 5 &mdash; Rome, Georgia"
+  heroImageAlt = "Two Post 5 officers in dress uniform with 'ROME, GA' caps at a meeting, an American flag visible behind them"
+  locality = "Rome"             # city
+  region = "GA"                 # state abbr
+  regionLong = "Georgia"        # state full
+  serviceArea = "Rome and Floyd County"
+  facebookSearch = "American Legion Post 5 Rome GA"
+  schemaAltName = "American Legion Post 5 Rome GA"
+  timezone = "America/New_York"
+
+# NOTE: the [params.*] sub-tables below must come AFTER every direct
+# `key = value` under [params] — in TOML, once a sub-table header opens, all
+# following keys belong to it. New simple params go above this line.
+
+# Structured mailing address (schema.org PostalAddress)
+[params.postal]
+  street = "P.O. Box 945"
+  locality = "Rome"
+  region = "GA"
+  postalCode = "30162"
+
+# Structured meeting venue (schema.org Place / location)
+[params.venue]
+  name = "The Farm (Walker Farm)"
+  street = "493 Jones Bend Rd NE"
+  locality = "Rome"
+  region = "GA"
+  postalCode = "30165"
 
 # Verified Google Maps shortlinks for known locations. Any address rendered
 # via the maps-link partial that contains one of these substrings (case-

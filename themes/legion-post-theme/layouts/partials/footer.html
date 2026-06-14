@@ -2,7 +2,7 @@
   <div class="container footer-grid">
     <div class="footer-col">
       <h2 class="footer-title">{{ site.Params.postName }}</h2>
-      <p class="footer-lede">American Legion Post 5 · Chartered {{ site.Params.charterYear }} · Rome, Georgia</p>
+      <p class="footer-lede">American Legion {{ site.Params.postShortName }} · Chartered {{ site.Params.charterYear }} · {{ site.Params.locality }}, {{ site.Params.regionLong }}</p>
       <address class="footer-address">
         <strong>Meets:</strong> {{ site.Params.meetingSchedule }}<br>
         <strong>Location:</strong> {{ partial "maps-link.html" (dict "address" site.Params.meetingLocation) }}<br>

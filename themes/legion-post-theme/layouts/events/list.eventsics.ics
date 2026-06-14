@@ -7,13 +7,15 @@
   newlines. One VEVENT per event page in the section.
 */ -}}
 {{- $stamp := now.UTC.Format "20060102T150405Z" -}}
+{{- $host := (urls.Parse site.BaseURL).Host -}}
+{{- $tz := site.Params.timezone | default "America/New_York" -}}
 BEGIN:VCALENDAR{{ "\r" }}
 VERSION:2.0{{ "\r" }}
-PRODID:-//romelegion.org//Post 5 Events//EN{{ "\r" }}
+PRODID:-//{{ $host }}//{{ site.Params.postShortName }} Events//EN{{ "\r" }}
 CALSCALE:GREGORIAN{{ "\r" }}
 METHOD:PUBLISH{{ "\r" }}
 X-WR-CALNAME:{{ site.Params.postName }} Events{{ "\r" }}
-X-WR-TIMEZONE:America/New_York{{ "\r" }}
+X-WR-TIMEZONE:{{ $tz }}{{ "\r" }}
 {{- range .Pages.ByDate }}
 {{- $title := .Title | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
 {{- $loc   := .Params.location | default "" | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
@@ -22,7 +24,7 @@ X-WR-TIMEZONE:America/New_York{{ "\r" }}
 {{- $endTime := .Date.Add (time.ParseDuration "2h") -}}
 {{- with .Params.endDate }}{{ $endTime = time.AsTime . }}{{ end -}}
 {{- $end := $endTime.UTC.Format "20060102T150405Z" -}}
-{{- $uid := printf "%s@romelegion.org" .File.ContentBaseName }}
+{{- $uid := printf "%s@%s" .File.ContentBaseName $host }}
 BEGIN:VEVENT{{ "\r" }}
 UID:{{ $uid }}{{ "\r" }}
 DTSTAMP:{{ $stamp }}{{ "\r" }}

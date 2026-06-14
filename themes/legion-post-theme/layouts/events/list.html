@@ -71,11 +71,11 @@
 
     <div class="prose">
       <h2>Stay Informed</h2>
-      <p>The best ways to know about new events at Post 5:</p>
+      <p>The best ways to know about new events at {{ site.Params.postShortName }}:</p>
       <ul>
         <li>Call the post: {{ partial "phone-reveal.html" (dict "phone" site.Params.postPhone) }}</li>
         <li>Email: <a href="mailto:{{ site.Params.postEmail }}">{{ site.Params.postEmail }}</a></li>
-        <li>Find us on Facebook: search for "American Legion Post 5 Rome GA"</li>
+        <li>Find us on Facebook: search for "{{ site.Params.facebookSearch }}"</li>
       </ul>
     </div>
   </div>
