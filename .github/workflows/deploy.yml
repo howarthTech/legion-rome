@@ -138,13 +138,17 @@ jobs:
             "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 
       - name: Verify deploy
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
-          # Smoke test the live site — homepage should 200 and contain our title
+          # Verify the rsynced files on the server itself. (Pre-DNS-cutover,
+          # https://romelegion.org/ still resolves to the old Legionsites host,
+          # so a public curl would test the wrong site. The public smoke test
+          # lives in the cutover runbook.)
           set -e
-          response=$(curl -fsS --max-time 15 https://romelegion.org/)
-          if echo "$response" | grep -q "American Legion Post 5"; then
-            echo "✓ Homepage live and contains expected title"
-          else
-            echo "✗ Homepage didn't contain expected content; check deploy"
-            exit 1
-          fi
+          ssh -i ~/.ssh/deploy_key -p 2222 -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "grep -q 'American Legion Post 5' '${DEPLOY_PATH}index.html'"
+          echo "✓ Deployed index.html present on server and contains expected title"
