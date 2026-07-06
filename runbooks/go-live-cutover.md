@@ -62,14 +62,11 @@ Then click around the real site, and run Lighthouse (target ≥95).
 
 ## Step 4 — Flip the DNS-dependent settings (droplet, ~5 min)
 
-```bash
-ssh osh-vps 'sudo bash -s' <<'EOF'
-set -e
-# CRM: events feed moves from the preview URL to the real one
-sed -i 's|^EVENTS_FEED_URL=.*|EVENTS_FEED_URL=https://romelegion.org/events/events.json|' /srv/secrets/crm-post-5.env
-cd /srv/apps/crm-post-5 && docker compose up -d --force-recreate
-EOF
-```
+- **Events API**: in this repo's `hugo.toml`, change `eventsAPI` from
+  `https://legion-admin-preview.howarth.tech/api/events.json` to
+  `https://admin.romelegion.org/api/events.json` (there's a TODO(cutover)
+  comment on the line) and push — the site builds its event pages from the
+  CRM's API, and the preview hostname goes away in step 5.
 
 - **Twilio** (once wired): Console → phone number → Messaging webhook →
   `https://admin.romelegion.org/webhooks/twilio` (POST).
