@@ -1,0 +1,40 @@
+{{/* Build event pages from the CRM's events API (the CRM is the source of
+     truth — events are authored by the post's admin in the CRM, not in this
+     repo). URL set in hugo.toml [params] eventsAPI.
+
+     Failure mode is deliberate: if the API is unreachable or malformed, the
+     BUILD FAILS (errorf) rather than silently publishing a site with no
+     events. The deploy job only rsyncs successful builds, so the live site
+     keeps its last good event pages. */}}
+
+{{ $url := site.Params.eventsAPI }}
+{{ if not $url }}
+  {{ errorf "params.eventsAPI is not set — the events section cannot build" }}
+{{ end }}
+
+{{ $opts := dict "headers" (dict "User-Agent" "hugo-legion-site-build") }}
+{{ with resources.GetRemote $url $opts }}
+  {{ with .Err }}
+    {{ errorf "events API fetch failed (%s): %s" $url . }}
+  {{ else }}
+    {{ $feed := .Content | transform.Unmarshal }}
+    {{ range $feed.events }}
+      {{ $params := dict
+           "location"     (.location | default "")
+           "contactName"  (.contactName | default "")
+           "contactPhone" (.contactPhone | default "")
+           "description"  (.description | default "")
+      }}
+      {{ with .endsAt }}{{ $params = merge $params (dict "endDate" .) }}{{ end }}
+      {{ $.AddPage (dict
+           "path"    .slug
+           "title"   .title
+           "dates"   (dict "date" (time.AsTime .startsAt))
+           "params"  $params
+           "content" (dict "mediaType" "text/markdown" "value" (.body | default ""))
+      ) }}
+    {{ end }}
+  {{ end }}
+{{ else }}
+  {{ errorf "events API returned no response (%s)" $url }}
+{{ end }}

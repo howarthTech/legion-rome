@@ -22,8 +22,10 @@ disableKinds = ["taxonomy", "term"]
 publishDir = "public"
 
 # Pretty URLs
+# (events intentionally has NO permalink pattern: event pages come from the
+# CRM via content/events/_content.gotmpl, and their URL is the adapter's
+# `path` — the CRM slug — giving /events/<slug>/ same as the old filenames.)
 [permalinks]
-  events = "/events/:slug/"
   news = "/news/:slug/"
 
 # Markdown renderer settings
@@ -75,6 +77,12 @@ publishDir = "public"
   facebookSearch = "American Legion Post 5 Rome GA"
   schemaAltName = "American Legion Post 5 Rome GA"
   timezone = "America/New_York"
+
+  # The CRM's public events feed — the events section builds its pages from
+  # this at build time (content/events/_content.gotmpl). The CRM is the source
+  # of truth for events; they are NOT authored in this repo.
+  # TODO(cutover): switch to https://admin.romelegion.org/api/events.json
+  eventsAPI = "https://legion-admin-preview.howarth.tech/api/events.json"
 
 # NOTE: the [params.*] sub-tables below must come AFTER every direct
 # `key = value` under [params] — in TOML, once a sub-table header opens, all

@@ -3,14 +3,15 @@ name: Build & Deploy
 # Triggers:
 # - Every push to main → build always runs (CI validation), deploy only if enabled
 # - Manual trigger from Actions tab
-# - Daily 5:00 AM UTC cron (1:00 AM Eastern) — keeps the past/upcoming event
-#   split current. Only useful once deploy is enabled; the build-only run
-#   exits cleanly when DEPLOY_ENABLED isn't set.
+# - workflow_dispatch is also hit by the CRM's rebuild hook (event add/edit/
+#   delete → instant site rebuild) when GITHUB_DISPATCH_* is configured.
+# - Hourly cron — picks up CRM event changes when the dispatch hook isn't
+#   configured, and keeps the past/upcoming event split current.
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 5 * * *"
+    - cron: "7 * * * *"
   workflow_dispatch: {}
 
 # Don't pile up parallel deploys for the same branch.
