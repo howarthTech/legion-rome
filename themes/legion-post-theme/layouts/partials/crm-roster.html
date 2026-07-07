@@ -1,0 +1,35 @@
+{{- /* Returns the post roster from the CRM content API when
+       site.Params.contentAPI is set, else falls back to data/officers.yaml.
+
+       Shape: a dict with "officers" and "family", each a slice of
+       {role, name, phone, email, weight}. The CRM is the source of truth;
+       the data-file fallback keeps the site buildable before a post's CRM
+       is wired (and byte-identical when the CRM holds the same roster).
+
+       Like the events adapter, a configured-but-failing API fails the build
+       (errorf) rather than silently dropping the roster. */ -}}
+{{- $out := dict "officers" slice "family" slice -}}
+{{- with site.Params.contentAPI -}}
+  {{- $opts := dict "headers" (dict "User-Agent" "hugo-legion-site-build") -}}
+  {{- with resources.GetRemote . $opts -}}
+    {{- with .Err -}}
+      {{- errorf "content API fetch failed (%s): %s" site.Params.contentAPI . -}}
+    {{- else -}}
+      {{- $data := .Content | transform.Unmarshal -}}
+      {{- $officers := slice -}}
+      {{- range $i, $o := $data.officers -}}
+        {{- $officers = $officers | append (dict "role" $o.role "name" $o.name "phone" (or $o.phone "") "email" (or $o.email "") "weight" (mul (add $i 1) 10)) -}}
+      {{- end -}}
+      {{- $family := slice -}}
+      {{- range $i, $o := $data.family -}}
+        {{- $family = $family | append (dict "role" $o.role "name" $o.name "phone" (or $o.phone "") "email" "" "weight" (mul (add $i 1) 10)) -}}
+      {{- end -}}
+      {{- $out = dict "officers" $officers "family" $family -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf "content API returned no response (%s)" site.Params.contentAPI -}}
+  {{- end -}}
+{{- else -}}
+  {{- $out = dict "officers" (site.Data.officers.officers) "family" (site.Data.officers.family_contacts) -}}
+{{- end -}}
+{{- return $out -}}

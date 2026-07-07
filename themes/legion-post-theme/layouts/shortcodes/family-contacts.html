@@ -1,8 +1,9 @@
 {{- /* Renders the Auxiliary / SAL contacts from data/officers.yaml.
        Phone numbers use the phone-reveal pattern to keep them out of the
        raw HTML. */ -}}
+{{- $roster := partial "crm-roster.html" . -}}
 <ul class="roster">
-  {{- range sort site.Data.officers.family_contacts "weight" }}
+  {{- range sort $roster.family "weight" }}
   <li>
     <div class="roster-role">{{ .role }}</div>
     <div class="roster-detail">

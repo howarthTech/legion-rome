@@ -5,8 +5,9 @@
        Note: in a Hugo shortcode template, `$` refers to the shortcode context
        (not the outer range scope). So we capture the officer's name in a
        local var before the with-block, then pass it to the phone partial. */ -}}
+{{- $roster := partial "crm-roster.html" . -}}
 <ul class="roster">
-  {{- range sort site.Data.officers.officers "weight" }}
+  {{- range sort $roster.officers "weight" }}
   {{- $officerName := .name -}}
   <li>
     <div class="roster-role">{{ .role }}</div>

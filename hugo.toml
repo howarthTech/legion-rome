@@ -84,6 +84,12 @@ publishDir = "public"
   # TODO(cutover): switch to https://admin.romelegion.org/api/events.json
   eventsAPI = "https://legion-admin-preview.howarth.tech/api/events.json"
 
+  # The CRM's public site-content feed — the officer/family roster is pulled
+  # from here at build time (partials/crm-roster.html). The CRM is the source
+  # of truth; data/officers.yaml is only a fallback when this is unset.
+  # TODO(cutover): switch to https://admin.romelegion.org/api/site.json
+  contentAPI = "https://legion-admin-preview.howarth.tech/api/site.json"
+
 # NOTE: the [params.*] sub-tables below must come AFTER every direct
 # `key = value` under [params] — in TOML, once a sub-table header opens, all
 # following keys belong to it. New simple params go above this line.
