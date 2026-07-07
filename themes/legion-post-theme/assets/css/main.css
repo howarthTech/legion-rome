@@ -1361,3 +1361,21 @@ address { font-style: normal; }
   body { color: #000; background: #fff; }
   a { color: #000; text-decoration: underline; }
 }
+
+/* Community events — public events the post takes part in (vs the post's own) */
+.event-badge-community {
+  background: var(--navy);
+  color: var(--gold);
+}
+.event-card-type {
+  display: inline-block;
+  margin: 0 0 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--navy);
+  border: 1px solid var(--navy);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+}

@@ -15,6 +15,9 @@
     <span class="event-year">{{ $date.Format "2006" }}</span>
   </time>
   <div class="event-body">
+    {{- if eq $p.Params.eventType "community" }}
+    <p class="event-card-type">Community Event</p>
+    {{- end }}
     <h3 class="event-title">
       <a href="{{ $p.RelPermalink }}" class="event-link-stretched">{{ $p.Title }}</a>
     </h3>

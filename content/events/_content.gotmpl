@@ -24,6 +24,7 @@
            "contactName"  (.contactName | default "")
            "contactPhone" (.contactPhone | default "")
            "description"  (.description | default "")
+           "eventType"    (.type | default "post")
       }}
       {{ with .endsAt }}{{ $params = merge $params (dict "endDate" .) }}{{ end }}
       {{ $.AddPage (dict
