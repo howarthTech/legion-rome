@@ -32,7 +32,7 @@ granddaughters, and great-granddaughters of qualifying veterans.
 Reach out to our Membership chair:
 
 > **Louise Burgess**
-> <a href="tel:7062669816">(706) 266-9816</a>
+> {{< phone "(706) 266-9816" "Louise Burgess" >}}
 
 ## What the Auxiliary Does at Post 5
 

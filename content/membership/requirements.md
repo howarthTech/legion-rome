@@ -40,7 +40,7 @@ You'll need:
 - Annual dues for the current year
 
 Submit through our [online form](/membership/apply/) or contact the Adjutant,
-**Rick Hunt**, at (912) 312-0258.
+**Rick Hunt**, at {{< phone "(912) 312-0258" "Rick Hunt" >}}.
 
 ## Questions
 

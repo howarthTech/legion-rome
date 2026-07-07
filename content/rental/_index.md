@@ -39,7 +39,7 @@ programs.
 To check availability and request a rental, please reach out via our
 [contact form](/contact/) — select **Commander Albert Hollis** in the
 dropdown — or call the post directly at
-<a href="tel:9512048635">(951) 204-8635</a>.
+{{< phone "(951) 204-8635" "Albert Hollis" >}}.
 
 When you contact us, please include:
 

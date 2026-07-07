@@ -55,7 +55,7 @@
       {{- end }}
     </div>
     {{- else }}
-    <p class="events-empty">No upcoming events on the calendar right now. <a href="/events/">See past events</a> or call us at <a href="tel:{{ replaceRE "[^0-9]" "" site.Params.postPhone }}">{{ site.Params.postPhone }}</a>.</p>
+    <p class="events-empty">No upcoming events on the calendar right now. <a href="/events/">See past events</a> or call us at {{ partial "phone-reveal.html" (dict "phone" site.Params.postPhone) }}.</p>
     {{- end }}
   </div>
 </section>

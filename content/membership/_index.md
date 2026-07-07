@@ -31,4 +31,4 @@ that fits — and you can support the others' activities regardless.
 If you're already a member nationally and want to **transfer** your membership
 to Post 5, you'll need your current membership card, a copy of your DD214, and
 the annual dues payment. Submit them with our [application](/membership/apply/)
-form or contact our [Adjutant, Rick Hunt](/contact/), at (912) 312-0258.
+form or contact our [Adjutant, Rick Hunt](/contact/), at {{< phone "(912) 312-0258" "Rick Hunt" >}}.

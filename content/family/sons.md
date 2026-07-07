@@ -29,7 +29,7 @@ There is no age limit and no upper bound on degree of descent.
 ## Contact for Membership
 
 > **Ronnie Grist**
-> <a href="tel:6782323381">(678) 232-3381</a>
+> {{< phone "(678) 232-3381" "Ronnie Grist" >}}
 
 ## What Squadron 5 Does at Post 5
 
