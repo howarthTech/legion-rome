@@ -90,6 +90,13 @@ publishDir = "public"
   # TODO(cutover): switch to https://admin.romelegion.org/api/site.json
   contentAPI = "https://legion-admin-preview.howarth.tech/api/site.json"
 
+  # The CRM's public gallery feed — album pages are built from this at build
+  # time (content/gallery/_content.gotmpl). Photos are fetched and attached as
+  # page resources so the theme can thumbnail/resize them. The pre-seeded
+  # The Farm album still lives in this repo alongside CRM albums.
+  # TODO(cutover): switch to https://admin.romelegion.org/api/gallery.json
+  galleryAPI = "https://legion-admin-preview.howarth.tech/api/gallery.json"
+
 # NOTE: the [params.*] sub-tables below must come AFTER every direct
 # `key = value` under [params] — in TOML, once a sub-table header opens, all
 # following keys belong to it. New simple params go above this line.

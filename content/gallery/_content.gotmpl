@@ -1,0 +1,56 @@
+{{/* Build gallery album pages from the CRM's gallery API (the CRM is the
+     source of truth — albums and photos are managed by the post's admin in the
+     CRM, not in this repo). URL set in hugo.toml [params] galleryAPI.
+
+     Each album becomes a page bundle and each photo is attached as a page
+     image resource, so the theme's gallery layouts can thumbnail and resize it
+     the same way they do for file-based albums (like the pre-seeded The Farm
+     album that still lives in this repo).
+
+     Failure mode is deliberate, matching events: if the API (or any photo) is
+     unreachable or malformed, the BUILD FAILS (errorf) rather than silently
+     publishing an incomplete gallery. The deploy job only rsyncs successful
+     builds, so the live site keeps its last good gallery. */}}
+
+{{ $url := site.Params.galleryAPI }}
+{{ if not $url }}
+  {{ errorf "params.galleryAPI is not set — the gallery section cannot build" }}
+{{ end }}
+
+{{ $opts := dict "headers" (dict "User-Agent" "hugo-legion-site-build") }}
+{{ with resources.GetRemote $url $opts }}
+  {{ with .Err }}
+    {{ errorf "gallery API fetch failed (%s): %s" $url . }}
+  {{ else }}
+    {{ $feed := .Content | transform.Unmarshal }}
+    {{ range $feed.albums }}
+      {{ $album := . }}
+      {{ $date := .date | default (now.Format "2006-01-02") }}
+      {{ $.AddPage (dict
+           "path"    .slug
+           "title"   .title
+           "dates"   (dict "date" (time.AsTime $date))
+           "content" (dict "mediaType" "text/markdown" "value" (.description | default ""))
+      ) }}
+      {{ range $i, $photo := .photos }}
+        {{ with resources.GetRemote $photo.url $opts }}
+          {{ with .Err }}
+            {{ errorf "gallery photo fetch failed (%s): %s" $photo.url . }}
+          {{ else }}
+            {{/* Zero-padded index prefix preserves the order the admin set in
+                 the CRM (the theme lists resources by name). */}}
+            {{ $.AddResource (dict
+                 "path"    (printf "%s/%04d-%s" $album.slug $i (path.Base $photo.url))
+                 "title"   ($photo.caption | default "")
+                 "content" (dict "mediaType" .MediaType.Type "value" .Content)
+            ) }}
+          {{ end }}
+        {{ else }}
+          {{ errorf "gallery photo returned no response (%s)" $photo.url }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ else }}
+  {{ errorf "gallery API returned no response (%s)" $url }}
+{{ end }}
