@@ -1,6 +1,7 @@
 ---
 title: "Photo Gallery"
 description: "Photos from Post 5 events — meetings, ceremonies, community service, and gatherings at The Farm."
+crmSlug: "gallery"
 ---
 
 Browse photos from Post 5 meetings, ceremonies, community service events, and

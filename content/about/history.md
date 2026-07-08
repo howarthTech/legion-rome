@@ -1,6 +1,7 @@
 ---
 title: "Post History"
 description: "Post 5 was chartered in 1925 and named for Shanklin Attaway."
+crmSlug: "history"
 ---
 
 {{< todo >}}

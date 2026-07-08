@@ -1,6 +1,7 @@
 ---
 title: "Membership"
 description: "Eligibility, how to join, and why Post 5 membership matters."
+crmSlug: "membership"
 ---
 
 The American Legion is the largest veterans service organization in the United

@@ -1,6 +1,7 @@
 ---
 title: "About Post 5"
 description: "Who we are, where we meet, and how we serve the Rome, Georgia community."
+crmSlug: "about"
 ---
 
 Shanklin Attaway American Legion Post 5 was chartered in **1925** and has served

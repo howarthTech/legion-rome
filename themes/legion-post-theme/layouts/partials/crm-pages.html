@@ -1,0 +1,29 @@
+{{- /* Returns the CRM's prose pages as a map keyed by slug: slug -> dict(title,
+       body). Only pages a post has actually written (non-empty body) appear —
+       this is what makes the page override *additive*: a repo page is only
+       replaced once the post authors that page in the CRM. Empty map when
+       params.contentAPI is unset or the feed has no such pages.
+
+       Fetched once per build via `partialCached "crm-pages" . "global"`. Like
+       the roster/config wiring, a configured-but-unreachable API fails the
+       build (errorf) rather than silently dropping content. */ -}}
+{{- $pages := dict -}}
+{{- with site.Params.contentAPI -}}
+  {{- $opts := dict "headers" (dict "User-Agent" "hugo-legion-site-build") -}}
+  {{- with resources.GetRemote . $opts -}}
+    {{- with .Err -}}
+      {{- errorf "content API fetch failed (%s): %s" site.Params.contentAPI . -}}
+    {{- else -}}
+      {{- $data := .Content | transform.Unmarshal -}}
+      {{- range $data.pages -}}
+        {{- $body := .body | default "" -}}
+        {{- if and .slug (ne $body "") -}}
+          {{- $pages = merge $pages (dict .slug (dict "title" (.title | default "") "body" $body)) -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf "content API returned no response (%s)" site.Params.contentAPI -}}
+  {{- end -}}
+{{- end -}}
+{{- return $pages -}}

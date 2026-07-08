@@ -1,6 +1,7 @@
 ---
 title: "The American Legion Family"
 description: "The Auxiliary, Sons of the American Legion, and Legion Riders at Post 5."
+crmSlug: "family"
 ---
 
 The American Legion Family at Post 5 includes three affiliated organizations,

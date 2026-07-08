@@ -7,7 +7,7 @@
     </header>
 
     <div class="prose">
-      {{ .Content }}
+      {{ with partial "crm-page-body.html" . }}{{ . }}{{ else }}{{ $.Content }}{{ end }}
     </div>
 
     {{- $albums := .Pages.ByDate.Reverse -}}

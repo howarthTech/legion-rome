@@ -1,0 +1,14 @@
+{{- /* Given a page, returns its CRM-authored body rendered to HTML when the
+       page opts in via `crmSlug` front matter AND the CRM has a non-empty body
+       for that slug; otherwise an empty string. The layouts prefer this over
+       the repo page's .Content, so a post can take over a page from the CRM
+       without the repo page changing until they do. */ -}}
+{{- $out := "" -}}
+{{- with .Params.crmSlug -}}
+  {{- $slug := . -}}
+  {{- $pages := partialCached "crm-pages" $ "global" -}}
+  {{- with index $pages $slug -}}
+    {{- $out = .body | markdownify -}}
+  {{- end -}}
+{{- end -}}
+{{- return $out -}}

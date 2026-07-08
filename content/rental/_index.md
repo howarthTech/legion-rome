@@ -1,6 +1,7 @@
 ---
 title: "Hall Rental"
 description: "Rent The Farm for your event. Proceeds support Post 5 programs."
+crmSlug: "rental"
 ---
 
 {{< todo >}}
