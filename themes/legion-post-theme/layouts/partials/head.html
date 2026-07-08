@@ -1,6 +1,7 @@
+{{- $cfg := partialCached "crm-config" . "global" -}}
 {{- $title := .Title -}}
 {{- if .IsHome -}}{{ $title = site.Title }}{{- else -}}{{ $title = printf "%s — %s" .Title site.Title }}{{- end }}
-{{- $description := .Description | default site.Params.description -}}
+{{- $description := .Description | default $cfg.description -}}
 {{- $css := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint -}}
 {{- /* Social-share image. Per-page front matter `image:` wins; otherwise the
        site-wide ogImage param; otherwise the page's first page-resource image
@@ -45,11 +46,11 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "{{ site.Params.postName }}",
+  "name": "{{ $cfg.postName }}",
   "alternateName": "{{ site.Params.schemaAltName }}",
   "url": "{{ site.BaseURL }}",
-  "email": "{{ site.Params.postEmail }}",
-  "foundingDate": "{{ site.Params.charterYear }}",
+  "email": "{{ $cfg.email }}",
+  "foundingDate": "{{ $cfg.charterYear }}",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "{{ site.Params.postal.street }}",

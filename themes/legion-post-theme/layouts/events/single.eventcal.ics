@@ -16,9 +16,10 @@
 {{- $stamp := now.UTC.Format "20060102T150405Z" -}}
 {{- $host := (urls.Parse site.BaseURL).Host -}}
 {{- $uid := printf "%s@%s" .File.ContentBaseName $host -}}
+{{- $cfg := partialCached "crm-config" . "global" -}}
 BEGIN:VCALENDAR{{ "\r" }}
 VERSION:2.0{{ "\r" }}
-PRODID:-//{{ $host }}//{{ site.Params.postShortName }} Events//EN{{ "\r" }}
+PRODID:-//{{ $host }}//{{ $cfg.postShortName }} Events//EN{{ "\r" }}
 CALSCALE:GREGORIAN{{ "\r" }}
 METHOD:PUBLISH{{ "\r" }}
 BEGIN:VEVENT{{ "\r" }}

@@ -20,6 +20,7 @@
 
   Output formatters: Hugo's `jsonify` handles escaping/encoding.
 */ -}}
+{{- $cfg := partialCached "crm-config" . "global" -}}
 {{- $events := slice -}}
 {{- range .Pages.ByDate -}}
   {{- $endTime := .Date.Add (time.ParseDuration "2h") -}}
@@ -42,6 +43,6 @@
 {{- end -}}
 {{- dict
     "generated" (now.UTC.Format "2006-01-02T15:04:05Z")
-    "siteName"  site.Params.postName
+    "siteName"  $cfg.postName
     "events"    $events
 | jsonify (dict "indent" "  ") -}}

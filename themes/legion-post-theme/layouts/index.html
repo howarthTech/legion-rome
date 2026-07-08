@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- $cfg := partialCached "crm-config" . "global" -}}
 {{- /* Hero images are per-instance assets, named via params so each client
        supplies its own. Defaults follow the convention images/hero-bg.jpg
        (full-bleed background) + images/hero.jpg (framed photo). */ -}}
@@ -17,8 +18,8 @@
   </div>
   <div class="container hero-content hero-grid">
     <div class="hero-text">
-      <p class="hero-eyebrow">Veterans Serving Veterans · Since {{ site.Params.charterYear }}</p>
-      <h1 class="hero-title">{{ site.Params.heroTitle | safeHTML }}</h1>
+      <p class="hero-eyebrow">Veterans Serving Veterans · Since {{ $cfg.charterYear }}</p>
+      <h1 class="hero-title">{{ $cfg.heroTitle | safeHTML }}</h1>
       <p class="hero-lede">
         We welcome veterans from every branch and every era. Through service, fellowship,
         and community support, we honor those who served and invest in the next generation.
@@ -31,7 +32,7 @@
     <figure class="hero-figure">
       {{ partial "responsive-image.html" (dict
         "src" $heroImg
-        "alt" site.Params.heroImageAlt
+        "alt" $cfg.heroImageAlt
         "sizes" "(min-width: 900px) 45vw, 100vw"
         "class" "hero-meeting-image"
         "loading" "eager"
@@ -55,7 +56,7 @@
       {{- end }}
     </div>
     {{- else }}
-    <p class="events-empty">No upcoming events on the calendar right now. <a href="/events/">See past events</a> or call us at {{ partial "phone-reveal.html" (dict "phone" site.Params.postPhone) }}.</p>
+    <p class="events-empty">No upcoming events on the calendar right now. <a href="/events/">See past events</a> or call us at {{ partial "phone-reveal.html" (dict "phone" $cfg.phone) }}.</p>
     {{- end }}
   </div>
 </section>
@@ -67,7 +68,7 @@
         <h2>Veterans Welcome</h2>
         <p>
           If you served at least one day of active duty during a qualifying period and
-          received an honorable discharge, you're eligible to join {{ site.Params.postShortName }}.
+          received an honorable discharge, you're eligible to join {{ $cfg.postShortName }}.
         </p>
         <a href="/membership/requirements/" class="cta-link">Check eligibility →</a>
       </article>
@@ -83,7 +84,7 @@
         <h2>Support Our Mission</h2>
         <p>
           Become a Booster or Sponsor. Every contribution funds scholarships, honor
-          guards, Memorial Day observances, and veteran outreach in {{ site.Params.serviceArea }}.
+          guards, Memorial Day observances, and veteran outreach in {{ $cfg.serviceArea }}.
         </p>
         <a href="/contact/" class="cta-link">Reach out →</a>
       </article>
@@ -95,8 +96,8 @@
   <div class="container">
     <h2 class="section-title">The Four Pillars</h2>
     <p class="section-lede">
-      Every American Legion post — including {{ site.Params.postShortName }} — is built on four enduring pillars
-      that guide our work in {{ site.Params.locality }} and across the country.
+      Every American Legion post — including {{ $cfg.postShortName }} — is built on four enduring pillars
+      that guide our work in {{ $cfg.locality }} and across the country.
     </p>
     <div class="pillar-grid">
       <div class="pillar">

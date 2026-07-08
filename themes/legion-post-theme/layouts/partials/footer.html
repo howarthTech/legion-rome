@@ -1,14 +1,15 @@
+{{- $cfg := partialCached "crm-config" . "global" -}}
 <footer class="site-footer" role="contentinfo">
   <div class="container footer-grid">
     <div class="footer-col">
-      <h2 class="footer-title">{{ site.Params.postName }}</h2>
-      <p class="footer-lede">American Legion {{ site.Params.postShortName }} · Chartered {{ site.Params.charterYear }} · {{ site.Params.locality }}, {{ site.Params.regionLong }}</p>
+      <h2 class="footer-title">{{ $cfg.postName }}</h2>
+      <p class="footer-lede">American Legion {{ $cfg.postShortName }} · Chartered {{ $cfg.charterYear }} · {{ $cfg.locality }}, {{ $cfg.regionLong }}</p>
       <address class="footer-address">
-        <strong>Meets:</strong> {{ site.Params.meetingSchedule }}<br>
-        <strong>Location:</strong> {{ partial "maps-link.html" (dict "address" site.Params.meetingLocation) }}<br>
-        <strong>Mail:</strong> {{ site.Params.mailingAddress }}<br>
-        <strong>Phone:</strong> {{ partial "phone-reveal.html" (dict "phone" site.Params.postPhone) }}<br>
-        <strong>Email:</strong> <a href="mailto:{{ site.Params.postEmail }}">{{ site.Params.postEmail }}</a>
+        <strong>Meets:</strong> {{ $cfg.meetingSchedule }}<br>
+        <strong>Location:</strong> {{ partial "maps-link.html" (dict "address" $cfg.meetingLocation) }}<br>
+        <strong>Mail:</strong> {{ $cfg.mailingAddress }}<br>
+        <strong>Phone:</strong> {{ partial "phone-reveal.html" (dict "phone" $cfg.phone) }}<br>
+        <strong>Email:</strong> <a href="mailto:{{ $cfg.email }}">{{ $cfg.email }}</a>
       </address>
     </div>
     <div class="footer-col">
@@ -22,7 +23,7 @@
     </div>
   </div>
   <div class="container footer-bottom">
-    <p>&copy; {{ now.Year }} {{ site.Params.postName }}. All rights reserved.</p>
+    <p>&copy; {{ now.Year }} {{ $cfg.postName }}. All rights reserved.</p>
     <p class="footer-meta">For God and Country.</p>
   </div>
 </footer>

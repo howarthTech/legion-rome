@@ -1,0 +1,55 @@
+{{- /* Merged post identity/contact config: the CRM content API (source of
+       truth) over hugo.toml [params] fallbacks. Mirrors partials/crm-roster.html.
+
+       A key takes its CRM value only when the content API is configured AND
+       that value is non-empty; otherwise the repo param. This keeps the site
+       buildable (and byte-identical) before a post's CRM config is filled in,
+       and lets the CRM override any field the post edits. Note the two name
+       mappings: the CRM's `email`/`phone` fall back to params `postEmail`/
+       `postPhone`.
+
+       Fetch once per build via `partialCached "crm-config" . "global"`. Like
+       the roster/events wiring, a configured-but-failing API fails the build
+       (errorf) rather than silently publishing stale identity. */ -}}
+{{- $p := site.Params -}}
+{{- $cfg := dict
+      "postName"        $p.postName
+      "postShortName"   $p.postShortName
+      "charterYear"     (string $p.charterYear)
+      "description"     $p.description
+      "locality"        $p.locality
+      "region"          $p.region
+      "regionLong"      $p.regionLong
+      "serviceArea"     $p.serviceArea
+      "timezone"        $p.timezone
+      "email"           $p.postEmail
+      "phone"           $p.postPhone
+      "mailingAddress"  $p.mailingAddress
+      "meetingLocation" $p.meetingLocation
+      "meetingSchedule" $p.meetingSchedule
+      "facebookURL"     $p.facebookURL
+      "heroTitle"       $p.heroTitle
+      "heroImageAlt"    $p.heroImageAlt
+-}}
+{{- with site.Params.contentAPI -}}
+  {{- $opts := dict "headers" (dict "User-Agent" "hugo-legion-site-build") -}}
+  {{- with resources.GetRemote . $opts -}}
+    {{- with .Err -}}
+      {{- errorf "content API fetch failed (%s): %s" site.Params.contentAPI . -}}
+    {{- else -}}
+      {{- $data := .Content | transform.Unmarshal -}}
+      {{- $over := dict -}}
+      {{- with $data.config -}}
+        {{- range $k, $v := . -}}
+          {{- if and (ne $v "") (isset $cfg $k) -}}
+            {{- $over = merge $over (dict $k $v) -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $cfg = merge $cfg $over -}}
+    {{- end -}}
+  {{- else -}}
+    {{- errorf "content API returned no response (%s)" site.Params.contentAPI -}}
+  {{- end -}}
+{{- end -}}
+{{- return $cfg -}}

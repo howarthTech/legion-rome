@@ -1,4 +1,5 @@
 {{ define "main" }}
+{{- $cfg := partialCached "crm-config" . "global" -}}
 {{- $upcoming := where .Pages "Date" "ge" now -}}
 {{- $past     := where .Pages "Date" "lt" now -}}
 {{- /* Cap visible past events so the list doesn't grow unbounded over years.
@@ -71,10 +72,10 @@
 
     <div class="prose">
       <h2>Stay Informed</h2>
-      <p>The best ways to know about new events at {{ site.Params.postShortName }}:</p>
+      <p>The best ways to know about new events at {{ $cfg.postShortName }}:</p>
       <ul>
-        <li>Call the post: {{ partial "phone-reveal.html" (dict "phone" site.Params.postPhone) }}</li>
-        <li>Email: <a href="mailto:{{ site.Params.postEmail }}">{{ site.Params.postEmail }}</a></li>
+        <li>Call the post: {{ partial "phone-reveal.html" (dict "phone" $cfg.phone) }}</li>
+        <li>Email: <a href="mailto:{{ $cfg.email }}">{{ $cfg.email }}</a></li>
         <li>Find us on Facebook: search for "{{ site.Params.facebookSearch }}"</li>
       </ul>
     </div>

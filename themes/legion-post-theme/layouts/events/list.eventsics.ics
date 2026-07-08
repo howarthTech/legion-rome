@@ -6,15 +6,16 @@
   RFC 5545: CRLF line endings (we append \r), text fields escape \ ; , and
   newlines. One VEVENT per event page in the section.
 */ -}}
+{{- $cfg := partialCached "crm-config" . "global" -}}
 {{- $stamp := now.UTC.Format "20060102T150405Z" -}}
 {{- $host := (urls.Parse site.BaseURL).Host -}}
-{{- $tz := site.Params.timezone | default "America/New_York" -}}
+{{- $tz := $cfg.timezone | default "America/New_York" -}}
 BEGIN:VCALENDAR{{ "\r" }}
 VERSION:2.0{{ "\r" }}
-PRODID:-//{{ $host }}//{{ site.Params.postShortName }} Events//EN{{ "\r" }}
+PRODID:-//{{ $host }}//{{ $cfg.postShortName }} Events//EN{{ "\r" }}
 CALSCALE:GREGORIAN{{ "\r" }}
 METHOD:PUBLISH{{ "\r" }}
-X-WR-CALNAME:{{ site.Params.postName }} Events{{ "\r" }}
+X-WR-CALNAME:{{ $cfg.postName }} Events{{ "\r" }}
 X-WR-TIMEZONE:{{ $tz }}{{ "\r" }}
 {{- range .Pages.ByDate }}
 {{- $title := .Title | replaceRE `\\` `\\\\` | replaceRE `;` `\;` | replaceRE `,` `\,` | replaceRE "\n" `\n` -}}
