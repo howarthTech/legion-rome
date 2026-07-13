@@ -15,6 +15,9 @@
     <div class="footer-col">
       <h2 class="footer-title">Resources</h2>
       <ul class="footer-links">
+        {{- with site.Params.subscribeURL }}
+        <li><a href="{{ . }}">Get text reminders</a></li>
+        {{- end }}
         {{- range site.Menus.footer }}
         {{- $isExternal := hasPrefix .URL "http" -}}
         <li><a href="{{ .URL }}"{{ if $isExternal }} rel="noopener noreferrer" target="_blank" class="link-external"{{ end }}>{{ .Name }}{{ if $isExternal }}<span class="visually-hidden"> (opens in a new tab)</span>{{ end }}</a></li>

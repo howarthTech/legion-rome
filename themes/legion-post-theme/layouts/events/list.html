@@ -74,6 +74,9 @@
       <h2>Stay Informed</h2>
       <p>The best ways to know about new events at {{ $cfg.postShortName }}:</p>
       <ul>
+        {{- with site.Params.subscribeURL }}
+        <li><strong>Get text reminders:</strong> <a href="{{ . }}">sign up here</a> to receive meeting &amp; event reminders by text (optional; reply STOP anytime).</li>
+        {{- end }}
         <li>Call the post: {{ partial "phone-reveal.html" (dict "phone" $cfg.phone) }}</li>
         <li>Email: <a href="mailto:{{ $cfg.email }}">{{ $cfg.email }}</a></li>
         <li>Find us on Facebook: search for "{{ site.Params.facebookSearch }}"</li>

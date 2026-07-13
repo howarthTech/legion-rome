@@ -97,6 +97,11 @@ publishDir = "public"
   # TODO(cutover): switch to https://admin.romelegion.org/api/gallery.json
   galleryAPI = "https://legion-admin-preview.howarth.tech/api/gallery.json"
 
+  # Public self-serve SMS opt-in page (served by the CRM). The site links to it
+  # as the text-reminder call-to-action; it's also the documented A2P opt-in URL.
+  # TODO(cutover): switch to https://admin.romelegion.org/subscribe
+  subscribeURL = "https://legion-admin-preview.howarth.tech/subscribe"
+
 # NOTE: the [params.*] sub-tables below must come AFTER every direct
 # `key = value` under [params] — in TOML, once a sub-table header opens, all
 # following keys belong to it. New simple params go above this line.
